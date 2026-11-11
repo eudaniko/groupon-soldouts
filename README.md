@@ -59,6 +59,8 @@ Value of a connected restock call, GP over 30 days, same merchant (90% interval)
 | C | £4.09 (2.9 to 5.2) | -£0.14 (-1.1 to 0.8) |
 | D | £2.04 (1.0 to 3.1) | £0.94 (0.4 to 1.6) |
 
+Deal Alerts (Priya's tip): 79% of manual sold-outs in the period got a sold-out alert within 3 days. With an alert, left-alone deals restock a bit more often (58% vs 52%) and a connected call is worth a bit less (£9.69 vs £11.17, same-merchant). So alerts do part of the job, but much less than auto-replenish. Not used in the decision yet; worth a look at why 21% get no alert.
+
 The £340k multiplies £11 by every task, but 28% are already called, the ones left are mostly small merchants, and the figure has no rep time in it.
 
 **2. The routing change is narrow on purpose.** Only deals with an open-ended auto-replenish schedule, bands B to D. Not band A: too few calls to be sure (the interval runs from £2.7 to £27.8). Not "every low-value task": that's a bigger change to how reps work and Dan, Renee and Greg should decide it, not me in three hours. It is the part I'm most sure is safe: about 77 tasks a week, ~15 rep hours, and at most ~£800 a year of GP at risk.

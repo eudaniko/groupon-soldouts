@@ -4,3 +4,4 @@ __pycache__/
 data/pack/
 .pytest_cache/
 data/marks_local.json
+*.tgz

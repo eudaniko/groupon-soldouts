@@ -2,7 +2,9 @@
 
 Built for Dan Okafor's sold-outs ask (Groupon UK Local, case exercise). People, merchants and numbers are invented.
 
-**In one line:** about 1 in 6 restock tasks is for a deal that tops itself up (auto-replenish), and a call there adds almost nothing. Stop creating those tasks (behind a switch, with a 20% holdout), and give reps a phone page that says, for the rest, call / don't bother / something else, with the £ and the quote behind it.
+**In one line:** about 1 in 5 restock tasks is for a deal that tops itself up (auto-replenish), and a call there adds almost nothing. Stop creating most of those tasks (config-only, off by default, with a 20% holdout), and give reps a phone page that says, for every sold-out, call / skip / later / something else, with the £ and the merchant's own words behind it.
+
+**For Dan:** ~18 rep hours a week back, counted from day one, with under £1k a year of GP at risk. What reps do with that time is worth £0 to ~£50k of GP a year, not £340k. First restock check mid-December, GP read mid-January, firm by mid-March (if it goes in at Friday's gate).
 
 ## Run it
 
@@ -21,8 +23,10 @@ Other commands:
 ```bash
 python3 -m soldouts.detect --backend rules --pack data/pack --merchants M10001   # text flags, offline
 python3 -m soldouts.detect --backend llm --merchants M10001 --out data/flags_llm.json --merge   # needs key
+python3 -m soldouts.measure volume                        # what the actual list removes (last 12 weeks)
 python3 -m soldouts.measure estimate                      # the range, from history
-python3 -m soldouts.measure readout --start 2026-11-14    # the real number, after launch
+python3 -m soldouts.measure readout --start 2026-11-15    # the real number, after launch
+python3 -m soldouts.evaluate data/rep_labels.csv          # tool vs a rep's ring/leave
 python3 scripts/build_suppressions.py --on 2026-11-13 --out proposal/suppressions.csv
 python3 scripts/estimate_uplift.py                        # re-check of the £11 memo (needs pandas)
 ```
@@ -33,12 +37,12 @@ The data pack (`data-pack.zip` from the Desk) goes in `data/pack/` for the scrip
 
 | Part | Where | Status |
 |---|---|---|
-| Rep tool (phone) | `soldouts/app.py`, `soldouts/static/index.html` | Works. Rep filter, call / something else / later / skip, £ value, quotes, merchant marks |
+| Rep tool (phone) | `soldouts/app.py`, `soldouts/static/index.html` | Works, hosted (link in the submission). Rep picker with search, call / other / later / skip, rank + £ + the sum behind it, "decided by" rule, quotes, merchant marks, editable hourly assumption |
 | Money logic | `soldouts/money.py`, `soldouts/decide.py` | Works, tested. Code does the sums |
 | Text flags (AI) | `soldouts/detect.py`, `soldouts/texts.py` | Rules backend offline; LLM backend with word-for-word quote check; results cached |
 | Routing change | `proposal/env_overrides.json` (config-only, for the freeze); `routing/` 2.16.0 code version for January | Done, tested, off by default |
 | Suppression list | `scripts/build_suppressions.py` -> `proposal/suppressions.csv` | Generated, not installed |
-| Measurement | `soldouts/measure.py`, `soldouts/holdout.py` | Estimate + readout scripts |
+| Measurement | `soldouts/measure.py`, `soldouts/holdout.py` | Volume, estimate and readout (holdout, corrected for the pre-launch gap) |
 | Analysis | `scripts/estimate_uplift.py` -> `data/uplift.json` | Re-check of Priya's memo |
 | Notes | `notes/dan.md`, `notes/greg-change-request.md` | |
 
@@ -63,25 +67,33 @@ Deal Alerts (Priya's tip): 79% of manual sold-outs in the period got a sold-out 
 
 The £340k multiplies £11 by every task, but 28% are already called, the ones left are mostly small merchants, and the figure has no rep time in it.
 
-**2. The routing change is narrow on purpose.** Only deals with an open-ended auto-replenish schedule, bands B to D. Not band A: too few calls to be sure (the interval runs from £2.7 to £27.8). Not "every low-value task": that's a bigger change to how reps work and Dan, Renee and Greg should decide it, not me in three hours. It is the part I'm most sure is safe: about 77 tasks a week, ~15 rep hours, and at most ~£800 a year of GP at risk.
+**2. The routing change is narrow on purpose.** Only deals with an open-ended auto-replenish schedule, bands B to D. Not band A: too few calls to be sure (the interval runs from £2.7 to £27.8). Not "every low-value task": that's a bigger change to how reps work and Dan, Renee and Greg should decide it, not me in three hours. It is the part I'm most sure is safe. Applied to the last 12 weeks, the list removes ~88 tasks a week (14% of all restock tasks), ~18 rep hours, with ~£500 a year of GP at risk (worst case ~£1k).
 
-**3a. For the freeze: config-only.** Greg's condition was "config-only, or it's January". So what goes to Friday's gate is `proposal/env_overrides.json`: the existing priors override unchanged, plus `routing.suppressed_deal_ids` with Ops' 3 existing ids (the override replaces the list in `routing.json`, so they must be carried over) and the 1,097 auto-replenish deals. No code change; routing already honours that list. Off = delete the `routing` block (tested: identical output). Known limit: in 2.15.0 a suppressed deal also loses a promised callback. The code change below fixes that and waits for January.
+**3a. For the freeze: config-only.** Greg's condition was "config-only, or it's January". So what goes to Friday's gate is `proposal/env_overrides.json`: the existing priors override unchanged, plus `routing.suppressed_deal_ids` with Ops' 3 existing ids (the override replaces the list in `routing.json`, so they must be carried over) and the 1,097 auto-replenish deals. No code change; routing already honours that list. Off = Merchant Ops deploys the file without the `routing` block (Hana pointed out that is a config deploy by Greg's team, not a flip); the next run's output is then identical to today's (tested in `tests/test_config_only.py`). Known limit: in 2.15.0 a suppressed deal also loses a promised callback. The code change below fixes that and waits for January. Change request: `notes/greg-change-request.md`.
 
 **3. The code version (2.16.0, for January): off by default, one switch, rollback = switch off.** The switch and the empty suppression file already existed in routing 2.15.0 ("agreed in October"). I wired them in `plan.py`: with the switch off the output is identical (tested); promised callbacks are never suppressed; only JSON `true` turns it on (a string `"false"` in `env_overrides.json` would otherwise be truthy).
 
 **4. The list only uses schedules that run past the freeze** (no end date, or ending after 7 January). Routing reads the file once per run and nobody can regenerate it during the freeze, so a schedule ending in December would leave a deal suppressed with nothing topping it up.
 
-**5. Holdout: 20% of merchants, by a stable hash**, keep getting tasks. The readout compares the same kind of sold-out in both groups, so peak season hits both.
+**5. Holdout: 20% of merchants, by a stable hash**, keep getting tasks. The readout compares the same kind of sold-out in both groups, so peak season hits both. See "How we'll know".
 
 **6. Money: value = P(connect) x GP uplift x (1 - refund risk) - rep time.** Per band uplift from the table; P(connect) is the merchant's own history pulled towards the band rate; refund risk is the merchant's refunds over the last 6 months as a share of GP + refunds, doubled if the text says they can't take more customers (the 30-day GP misses refunds that come later). Rep time is 12 minutes at **£20/hour, an assumption**: Priya has no loaded cost; Dan said use it, but label it an assumption and make it easy to change. The page shows it as an assumption and lets you change it (`?rate=`), and `REP_HOURLY_COST_GBP` sets the default. At £20/h most band C and D tasks are worth less than the rep's time.
 
-**7. Decision order** (`soldouts/decide.py`): do-not-contact, promised callback, the rep's own mark, auto-replenish, merchant said no, merchant away (only if said in the last 3 weeks), capacity or quality problem (then: talk capacity, not a bigger cap), Deal Alert link trouble (then: send login help, not a sales call), then the £ value.
+**7. Decision order** (`soldouts/decide.py`, first match wins; the page shows which rule decided): do-not-contact, promised callback, the rep's own mark, auto-replenish running (bands B–D), merchant said no, merchant says it tops up by itself, merchant away (only if said in the last 3 weeks), capacity or quality problem (then: talk capacity, not a bigger cap), Deal Alert link trouble (then: send login help, not a sales call), then the £ value, highest first.
 
 **8. One customer complaint is not a flag.** A review or refund reason only counts with a second one, or if the rep or merchant said it too. A newer "wants more" from the merchant beats older negatives.
 
+## How we'll know (the number for Dan)
+
+- **Counted from day one:** tasks not created x 12 minutes. On the last 12 weeks the list would have removed ~88 tasks a week: **~18 rep hours a week** (`python3 -m soldouts.measure volume`).
+- **What it costs:** GP lost by not calling those deals: ~£500 a year, worst case ~£1k (calls on auto-replenished deals add £0–3 each, and few of them were made).
+- **What it could earn:** if the freed slots go to the next task on the list, between £0 (time goes elsewhere) and ~£50k a year (every slot becomes a band-A manual call). That's the honest range, and it's why I don't quote one number.
+- **The real number:** `python3 -m soldouts.measure readout --start <first run>`. It compares listed deals (treated) with the 20% holdout on 14-day restock rate and 30-day GP, **minus the same gap in the 12 weeks before launch**. The hash split isn't perfectly balanced: on history, with no change at all, "treated" merchants restocked ~5 points less often than the holdout, so a plain comparison would look like harm on day one.
+- **How sure:** on history with no change (an A/A test), the restock effect moves by about ±9 points at 4 weeks and ±7 at 12; GP by about ±£2.5 at 12 weeks. So: first restock check at week 4 (mid-December if it starts 15 November), first GP read mid-January, firm by mid-March. The stop rule's thresholds (restock 10 points worse; GP credibly below zero) are set above that noise.
+
 ## Where AI is used, and how it's checked
 
-- **In the product:** `soldouts/detect.py` sends one merchant's last 12 months of text (rep notes, Deal Alert replies, reviews, refund reasons; newest 60 items) to `claude-haiku-5-5` through the sandbox gateway, with a fixed JSON schema and thinking off. It must cite an item id and quote it word for word. **Code checks every quote against the cited item and drops it if it isn't there.** Cut-off answers (`stop_reason` not `end_turn`) are rejected, not parsed. Results are cached in `data/flags_llm.json`; the tool reads the cache and falls back to the rules backend.
+- **In the product:** `soldouts/detect.py` sends one merchant's last 12 months of text (rep notes, Deal Alert replies, reviews, refund reasons; newest 60 items, cleaned: duplicates from the CRM replay removed, Windows-1252 mojibake fixed) to `claude-haiku-5-5` through the sandbox gateway, with a fixed JSON schema and thinking off. It must cite an item id and quote it word for word. **Code checks every quote against the cited item and drops it if it isn't there.** Cut-off answers (`stop_reason` not `end_turn`) are rejected, not parsed. Results are cached in `data/flags_llm.json`; the hosted tool reads new merchants in the background as they sell out, and shows the rules flags until then. Spend so far: about $0.02 of the $20 (about $0.0003 per merchant).
 - **The AI never does the sums or makes the decision.** It produces flags + quotes; `decide.py` applies fixed rules.
 - **Offline:** the rules backend (regular expressions, same output shape) runs with no network and no key, which is what the tests and an offline run use.
 - **Checked against people:** see "Checked against a rep" below.
@@ -98,7 +110,8 @@ PENDING: Renee's labels for merchants in her book vs the tool's decision and fla
 - Refund risk is a proxy (past refund share), not a forecast.
 - Rules backend is crude: it flags "auto top-up" in "auto top-up wasn't something she wanted". The LLM reads that correctly, but only for merchants we paid to run it on.
 - Merchant marks live in the sandbox (and a local file); routing doesn't read them.
-- The readout needs ~3 months of sold-outs + 30 days to say anything about GP with confidence. Rep hours saved are counted from day one.
+- The readout is noisy with a 20% holdout (see "How we'll know"); GP needs ~12 weeks + 30 days to be firm. Rep hours saved are counted from day one.
+- The holdout measures what we lose by not calling. It does **not** measure the upside: what reps do with the 18 freed hours lands on everyone's list, holdout merchants included.
 
 ## What I cut, and why
 
@@ -106,5 +119,7 @@ PENDING: Renee's labels for merchants in her book vs the tool's decision and fla
 - **Band A auto-replenish tasks.** Not enough data to be sure.
 - **Automated cap raises** (Priya's second recommendation). Greg said not before January, and it's his team's call.
 - **Routing reading marks or flags directly.** Would be a bigger change in a freeze week.
-- **Running the LLM on all 3,000 merchants.** Budget (~1 cent each through Sonnet) and not needed: today's sold-outs only.
+- **Running the LLM on all 3,000 merchants up front.** Cheap with Haiku (about $1), but not needed: the tool reads a merchant when it sells out. Worth doing before routing ever uses the flags.
+- **A rep-level holdout** to measure the upside of the freed time. 24 reps are too few to see it in weeks.
+- **Using Deal Alerts in the decision.** They help a bit (see above); not enough to change a call, and I ran out of time.
 - **Login, rep accounts, offline mode in the app.** A shared password on the hosted copy.

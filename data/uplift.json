@@ -1,0 +1,77 @@
+{
+  "period": [
+    "2025-10-01",
+    "2026-09-30"
+  ],
+  "auto_share": 0.186,
+  "bands": {
+    "A": {
+      "uplift_per_connected_call_gbp": 14.64,
+      "uplift_ci90": [
+        11.9,
+        16.85
+      ],
+      "uplift_when_auto_replenish_gbp": 14.56,
+      "uplift_when_auto_ci90": [
+        2.73,
+        27.78
+      ],
+      "n_auto_called": 48,
+      "n_auto": 654,
+      "connect_rate": 0.729,
+      "auto_restock_rate": 0.968,
+      "auto_median_days_to_restock": 6.0
+    },
+    "B": {
+      "uplift_per_connected_call_gbp": 8.18,
+      "uplift_ci90": [
+        6.67,
+        9.72
+      ],
+      "uplift_when_auto_replenish_gbp": 3.23,
+      "uplift_when_auto_ci90": [
+        1.45,
+        4.87
+      ],
+      "n_auto_called": 140,
+      "n_auto": 1651,
+      "connect_rate": 0.708,
+      "auto_restock_rate": 0.958,
+      "auto_median_days_to_restock": 7.0
+    },
+    "C": {
+      "uplift_per_connected_call_gbp": 4.09,
+      "uplift_ci90": [
+        2.87,
+        5.19
+      ],
+      "uplift_when_auto_replenish_gbp": -0.14,
+      "uplift_when_auto_ci90": [
+        -1.06,
+        0.76
+      ],
+      "n_auto_called": 167,
+      "n_auto": 1946,
+      "connect_rate": 0.586,
+      "auto_restock_rate": 0.965,
+      "auto_median_days_to_restock": 7.0
+    },
+    "D": {
+      "uplift_per_connected_call_gbp": 2.04,
+      "uplift_ci90": [
+        1.02,
+        3.06
+      ],
+      "uplift_when_auto_replenish_gbp": 0.94,
+      "uplift_when_auto_ci90": [
+        0.38,
+        1.57
+      ],
+      "n_auto_called": 132,
+      "n_auto": 1439,
+      "connect_rate": 0.408,
+      "auto_restock_rate": 0.958,
+      "auto_median_days_to_restock": 7.0
+    }
+  }
+}

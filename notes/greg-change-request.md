@@ -12,12 +12,14 @@ Stop rule. Off if any of these:
 1. A rep or merchant reports a listed deal sold out for 14+ days.
 2. From week 4, checked weekly: listed deals' 14-day restock rate falls more than 10 points behind the holdout, measured against the same gap before launch. (Why 10: on history with no change at all, this number moves by about ±9 points at 4 weeks.)
 3. From day 30: GP per sold-out is credibly lower than the holdout (the 90% interval is entirely below zero).
-Owner: Daniel runs the check every Monday (python3 -m soldouts.measure readout) and posts it in #uk-soldouts. Who in Merchant Ops removes it, and whether that counts as an emergency change you sign off during the freeze, is your call: please name the person.
+Owner: Daniel runs the check every Monday (python3 -m soldouts.measure readout) and posts it in #uk-soldouts. Who in Merchant Ops removes it is your call: please name the person.
+
+In the freeze. From Monday to 7 Jan nothing touches merchant config, so taking it off in that window would itself need your sign-off as an exception. If you'd rather not allow that: on the numbers it puts about £90 of GP at risk over the whole freeze (worst case ~£160), and reps can still ring any listed deal; it just isn't on their list.
 
 Only automation. Every deal is on the list because of an auto-replenish schedule. Nobody is skipped for any other reason, so no rep-confirmed list is needed for this change. Rep marks in the tool don't touch routing.
 
 Known limit. In today's code suppressed_deal_ids also drops a promised callback on that deal. Should be rare on auto-topped-up deals; reps can still ring. The proper fix (callbacks never suppressed, behind suppress_soldout_tasks) is ready as 2.16.0 for January.
 
-Review. Hana has looked at the list and the config. Agreed by Thursday morning for Friday's gate; otherwise January.
+Review. Hana has looked at the list and the config. For tomorrow's 15:00 change review. If it isn't agreed there: Friday's 11:00 gate at the latest (agreed by Thursday morning), otherwise January.
 
-Two questions for you: (1) OK to go in before the freeze, given rollback is a config deploy? (2) Who removes it if a stop rule triggers?
+Two questions for you: (1) OK to take it at tomorrow's review? (2) If a stop rule triggers during the freeze, may Merchant Ops remove the block as an exception, and who does it?

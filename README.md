@@ -4,7 +4,7 @@ Built for Dan Okafor's sold-outs ask (Groupon UK Local, case exercise). People, 
 
 **In one line:** about 1 in 5 restock tasks is for a deal that tops itself up (auto-replenish), and a call there adds almost nothing. Stop creating most of those tasks (config-only, off by default, with a 20% holdout), and give reps a phone page that says, for every sold-out, call / skip / later / something else, with the £ and the merchant's own words behind it.
 
-**For Dan:** ~18 rep hours a week back, counted from day one, with under £1k a year of GP at risk. What reps do with that time is worth £0 to ~£50k of GP a year, not £340k. First restock check mid-December, GP read mid-January, firm by mid-March (if it goes in at Friday's gate).
+**For Dan:** ~18 rep hours a week back, counted from day one, with under £1k a year of GP at risk. What reps do with that time is worth £0 to ~£50k of GP a year, not £340k. First restock check mid-December, GP read mid-January, firm by mid-March (if it goes in this week, before the freeze).
 
 ## Run it
 
@@ -78,7 +78,7 @@ The £340k multiplies £11 by every task, but 28% are already called, the ones l
 
 **2. The routing change is narrow on purpose.** Only deals with an open-ended auto-replenish schedule, bands B to D. Not band A: too few calls to be sure (the interval runs from £2.7 to £27.8). Not "every low-value task": that's a bigger change to how reps work and Dan, Renee and Greg should decide it, not me in three hours. It is the part I'm most sure is safe. Applied to the last 12 weeks, the list removes ~88 tasks a week (14% of all restock tasks), ~18 rep hours, with ~£500 a year of GP at risk (worst case ~£1k).
 
-**3a. For the freeze: config-only.** Greg's condition was "config-only, or it's January". So what goes to Friday's gate is `proposal/env_overrides.json`: the existing priors override unchanged, plus `routing.suppressed_deal_ids` with Ops' 3 existing ids (the override replaces the list in `routing.json`, so they must be carried over) and the 1,097 auto-replenish deals. No code change; routing already honours that list. Off = Merchant Ops deploys the file without the `routing` block (Hana pointed out that is a config deploy by Greg's team, not a flip); the next run's output is then identical to today's (tested in `tests/test_config_only.py`). Known limit: in 2.15.0 a suppressed deal also loses a promised callback. The code change below fixes that and waits for January. Change request: `notes/greg-change-request.md`.
+**3a. For the freeze: config-only.** Greg's condition was "config-only, or it's January". So what goes to Greg's change review (Wednesday 15:00, the last before the freeze; Friday 11:00 is only a final gate for things already discussed) is `proposal/env_overrides.json`: the existing priors override unchanged, plus `routing.suppressed_deal_ids` with Ops' 3 existing ids (the override replaces the list in `routing.json`, so they must be carried over) and the 1,097 auto-replenish deals. No code change; routing already honours that list. Off = Merchant Ops deploys the file without the `routing` block (Hana pointed out that is a config deploy by Greg's team, not a flip); the next run's output is then identical to today's (tested in `tests/test_config_only.py`). Known limit: in 2.15.0 a suppressed deal also loses a promised callback. The code change below fixes that and waits for January. Change request: `notes/greg-change-request.md`.
 
 **3. The code version (2.16.0, for January): off by default, one switch, rollback = switch off.** The switch and the empty suppression file already existed in routing 2.15.0 ("agreed in October"). I wired them in `plan.py`: with the switch off the output is identical (tested); promised callbacks are never suppressed; only JSON `true` turns it on (a string `"false"` in `env_overrides.json` would otherwise be truthy).
 
@@ -120,6 +120,7 @@ PENDING: Renee's labels for merchants in her book vs the tool's decision and fla
 - Rules backend is crude: it flags "auto top-up" in "auto top-up wasn't something she wanted". The LLM reads that correctly, but only for merchants we paid to run it on.
 - Merchant marks live in the sandbox (and a local file); routing doesn't read them.
 - The readout is noisy with a 20% holdout (see "How we'll know"); GP needs ~12 weeks + 30 days to be firm. Rep hours saved are counted from day one.
+- In the freeze (Monday to 7 January) nothing touches merchant config, so taking the list off is itself a change Greg would have to sign off. On the numbers the list puts about £90 of GP at risk over the whole freeze (worst case ~£160: the yearly figure x 8 weeks x 1.1, because last year's sold-outs ran ~10% above average in that window), and reps can still ring any listed deal.
 - The holdout measures what we lose by not calling. It does **not** measure the upside: what reps do with the 18 freed hours lands on everyone's list, holdout merchants included.
 
 ## What I cut, and why

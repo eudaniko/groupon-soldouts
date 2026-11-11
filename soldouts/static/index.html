@@ -3,121 +3,180 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#f5f4f0">
 <title>Sold-outs today</title>
 <style>
-:root{--bg:#f6f5f2;--card:#fff;--ink:#1b1f1d;--mute:#6b716e;--line:#e4e2dc;--call:#1f7a4d;--call-bg:#e6f3ec;--skip:#7a7f7c;--skip-bg:#efefec;--later:#9a6a00;--later-bg:#fbf1dc;--other:#2a5bb8;--other-bg:#e7eefb;--accent:#53a318}
-@media (prefers-color-scheme:dark){:root{--bg:#121514;--card:#1b1f1d;--ink:#eceeed;--mute:#9aa29e;--line:#2c3230;--call:#5fd197;--call-bg:#173326;--skip:#a2a8a5;--skip-bg:#25292a;--later:#f0c060;--later-bg:#3a2f15;--other:#8fb2ff;--other-bg:#1c2944}}
-*{box-sizing:border-box}
+:root{--bg:#f5f4f0;--card:#fff;--ink:#16191a;--mute:#6a706d;--faint:#9aa09d;--line:#e3e1db;--chip:#ecebe6;
+--call:#157a46;--call-bg:#e3f3ea;--skip:#6b716e;--skip-bg:#eeeeeb;--later:#946300;--later-bg:#fbefd5;--other:#2456b8;--other-bg:#e5edfb;
+--shadow:0 1px 2px rgba(0,0,0,.05),0 4px 14px rgba(0,0,0,.04)}
+@media (prefers-color-scheme:dark){:root{--bg:#101312;--card:#191d1c;--ink:#eef0ef;--mute:#a0a7a3;--faint:#6f7773;--line:#2a302e;--chip:#232826;
+--call:#5fd197;--call-bg:#16301f;--skip:#a4aaa7;--skip-bg:#232827;--later:#f2c25e;--later-bg:#372c12;--other:#91b4ff;--other-bg:#1b2742;--shadow:none}}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
-header{position:sticky;top:0;z-index:2;background:var(--bg);padding:12px 16px 8px;border-bottom:1px solid var(--line)}
-h1{font-size:18px;margin:0 0 8px}
-.row{display:flex;gap:8px;align-items:center}
-select,input,textarea,button{font:inherit;color:inherit}
-select,input,textarea{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px}
-select{flex:1;min-width:0}
-.tabs{display:flex;gap:6px;margin-top:8px;overflow-x:auto}
-.tab{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:5px 11px;white-space:nowrap;cursor:pointer}
-.tab[aria-pressed=true]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
-main{padding:12px 16px 40px;max-width:720px;margin:0 auto}
-.src{font-size:12px;color:var(--mute);margin:0 0 10px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px}
-.top{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
-.name{font-weight:600}
-.meta{font-size:12px;color:var(--mute)}
-.pill{font-size:12px;font-weight:600;padding:3px 8px;border-radius:999px;white-space:nowrap}
-.call{color:var(--call);background:var(--call-bg)}.skip{color:var(--skip);background:var(--skip-bg)}
-.later{color:var(--later);background:var(--later-bg)}.other{color:var(--other);background:var(--other-bg)}
-.head{font-weight:600;margin:8px 0 2px}
-.why{margin:0;color:var(--ink)}
-blockquote{margin:8px 0 0;padding:6px 10px;border-left:3px solid var(--line);color:var(--mute);font-size:14px}
-blockquote small{display:block;font-size:11px;margin-top:2px}
-details{margin-top:8px;font-size:13px;color:var(--mute)}
-summary{cursor:pointer}
-.markbox{margin-top:10px;display:none;gap:6px;flex-direction:column}
-.markbox.open{display:flex}
-button.link{background:none;border:0;color:var(--other);padding:0;margin-top:8px;cursor:pointer;font-size:14px}
-button.primary{background:var(--ink);color:var(--bg);border:0;border-radius:8px;padding:9px}
-.marked{margin-top:8px;font-size:13px;background:var(--other-bg);color:var(--other);padding:6px 8px;border-radius:8px}
-.assume{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:8px;font-size:13px}
-.assume input{width:62px;padding:4px 6px;margin:0 2px}
-.tag{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--later);background:var(--later-bg);padding:2px 7px;border-radius:999px}
-.empty{color:var(--mute);text-align:center;padding:30px 0}
+button,input,select,textarea{font:inherit;color:inherit}
+header{position:sticky;top:0;z-index:5;background:var(--bg);padding:10px 16px 0;border-bottom:1px solid var(--line)}
+.bar{display:flex;align-items:center;gap:10px}
+.who{flex:1;min-width:0;display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:8px 12px;cursor:pointer;text-align:left;box-shadow:var(--shadow)}
+.av{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:13px;background:var(--ink);color:var(--bg);flex:none}
+.who b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.who small{color:var(--mute);font-size:12px}
+.chev{margin-left:auto;color:var(--faint)}
+.sum{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:8px 10px}
+.stat .n{font-size:22px;font-weight:750;line-height:1.1;font-variant-numeric:tabular-nums}
+.stat .l{font-size:11px;color:var(--mute);text-transform:uppercase;letter-spacing:.04em}
+.stat.call .n{color:var(--call)}
+.seg{display:flex;gap:4px;background:var(--chip);border-radius:12px;padding:3px;margin-bottom:10px}
+.seg button{flex:1;border:0;background:none;border-radius:9px;padding:7px 2px;font-size:13px;font-weight:600;color:var(--mute);cursor:pointer;white-space:nowrap}
+.seg button span{font-variant-numeric:tabular-nums;opacity:.75;margin-left:3px}
+.seg button[aria-pressed=true]{background:var(--card);color:var(--ink);box-shadow:var(--shadow)}
+main{padding:12px 16px 60px;max-width:680px;margin:0 auto}
+.card{position:relative;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 14px 12px 18px;margin-bottom:12px;box-shadow:var(--shadow);overflow:hidden}
+.card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--a)}
+.card.call{--a:var(--call);--ab:var(--call-bg)}.card.skip{--a:var(--skip);--ab:var(--skip-bg)}.card.later{--a:var(--later);--ab:var(--later-bg)}.card.other{--a:var(--other);--ab:var(--other-bg)}
+.act{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.act h2{margin:0;font-size:18px;line-height:1.25;color:var(--a)}
+.gbp{flex:none;font-size:20px;font-weight:800;color:var(--a);background:var(--ab);border-radius:10px;padding:3px 10px;font-variant-numeric:tabular-nums}
+.m{margin-top:6px;font-weight:650;font-size:16px}
+.meta{font-size:12.5px;color:var(--mute);margin-top:1px}
+.why{margin:8px 0 0;font-size:14.5px}
+blockquote{margin:10px 0 0;padding:8px 10px;background:var(--bg);border-radius:10px;font-size:14px;color:var(--ink)}
+blockquote small{display:block;font-size:11.5px;color:var(--mute);margin-top:3px}
+.marked{margin-top:10px;font-size:13px;background:var(--other-bg);color:var(--other);padding:7px 10px;border-radius:10px}
+.foot{display:flex;gap:8px;margin-top:10px}
+.ghost{flex:1;border:1px solid var(--line);background:none;border-radius:10px;padding:8px;font-size:13.5px;cursor:pointer}
+.more{display:none;margin-top:10px;font-size:13px;color:var(--mute);border-top:1px dashed var(--line);padding-top:10px}
+.more.open{display:block}.more ul{padding-left:18px;margin:6px 0}
+form.mark{display:none;flex-direction:column;gap:8px;margin-top:10px}
+form.mark.open{display:flex}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.opts label{border:1px solid var(--line);border-radius:10px;padding:8px;font-size:13px;cursor:pointer}
+.opts input{display:none}.opts label:has(input:checked){border-color:var(--ink);background:var(--chip);font-weight:600}
+textarea,input[type=text]{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:9px}
+.primary{background:var(--ink);color:var(--bg);border:0;border-radius:10px;padding:11px;font-weight:650;cursor:pointer}
+.empty{color:var(--mute);text-align:center;padding:40px 0}
+.note{font-size:12px;color:var(--mute);margin:4px 0 12px}
+.note b{color:var(--later);background:var(--later-bg);font-size:10.5px;padding:1px 6px;border-radius:999px;letter-spacing:.04em;text-transform:uppercase}
+.note input{width:52px;padding:2px 5px;border:1px solid var(--line);border-radius:7px;background:var(--card)}
+/* rep sheet */
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:10;display:none}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:11;background:var(--card);border-radius:18px 18px 0 0;max-height:82vh;display:none;flex-direction:column;box-shadow:0 -8px 30px rgba(0,0,0,.2)}
+.open-sheet .scrim{display:block}.open-sheet .sheet{display:flex}
+.sheet .h{padding:12px 16px 8px}
+.grab{width:40px;height:4px;border-radius:2px;background:var(--line);margin:0 auto 10px}
+.sheet input{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--bg)}
+.list{overflow-y:auto;padding:0 8px 24px;-webkit-overflow-scrolling:touch}
+.team{font-size:11px;font-weight:700;color:var(--mute);text-transform:uppercase;letter-spacing:.05em;padding:12px 10px 4px}
+.rep{display:flex;align-items:center;gap:10px;width:100%;border:0;background:none;padding:9px 10px;border-radius:12px;cursor:pointer;text-align:left}
+.rep:active,.rep.sel{background:var(--chip)}
+.rep .av{width:30px;height:30px;font-size:12px}
+.rep .cnt{margin-left:auto;font-size:12px;font-weight:700;background:var(--call-bg);color:var(--call);border-radius:999px;padding:2px 8px}
+.rep.zero{opacity:.45}.rep.zero .cnt{background:var(--chip);color:var(--mute)}
 </style>
 </head>
 <body>
 <header>
-  <h1>Sold-outs today</h1>
-  <div class="row"><select id="rep" aria-label="Rep"><option value="">All reps</option></select></div>
-  <div class="assume"><label for="rate">Rep time <b>£<input id="rate" type="number" min="0" max="500" step="1" inputmode="decimal">/hour</b></label>
-  <span class="tag">assumption</span><span class="meta" id="rateNote"></span></div>
-  <div class="tabs" id="tabs"></div>
+  <div class="bar">
+    <button class="who" id="who" aria-haspopup="dialog"><span class="av" id="whoAv">All</span>
+      <span style="min-width:0"><b id="whoName">All reps</b><small id="whoSub">Tap to pick a rep</small></span><span class="chev">▾</span></button>
+  </div>
+  <div class="sum" id="sum"></div>
+  <div class="seg" id="seg" role="tablist"></div>
 </header>
 <main>
-  <p class="src" id="src">Loading…</p>
-  <div id="list"></div>
+  <p class="note" id="note"></p>
+  <div id="list"><p class="empty">Loading today's sold-outs…</p></div>
 </main>
+<div class="scrim" id="scrim"></div>
+<div class="sheet" role="dialog" aria-label="Pick a rep">
+  <div class="h"><div class="grab"></div><input id="q" type="search" placeholder="Search rep or team" autocomplete="off"></div>
+  <div class="list" id="reps"></div>
+</div>
 <script>
-const ACTIONS=[["call","Call"],["other","Something else"],["later","Later"],["skip","Skip"],["all","All"]];
-const MARKS={no_call:"Don't call on sell-outs",always_call:"Always call on sell-outs",capacity:"Can't take more customers",auto_ok:"Auto top-up handles it"};
-const SRC={rep_note:"Rep note",alert_reply:"Merchant reply to Deal Alert",review:"Customer review",refund_reason:"Refund reason"};
-let board=null, tab="call";
+const TABS=[["call","Call"],["other","Other"],["later","Later"],["skip","Skip"]];
+const MARKS={no_call:"Don't call on sell-outs",always_call:"Always call",capacity:"Can't take more",auto_ok:"Auto top-up handles it"};
+const SRC={rep_note:"Rep note",alert_reply:"Merchant's reply to Deal Alert",review:"Customer review",refund_reason:"Refund reason"};
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-function store(k,v){try{v===undefined?0:localStorage.setItem(k,v);return localStorage.getItem(k)}catch(e){return null}}
+const ls=(k,v)=>{try{if(v!==undefined)localStorage.setItem(k,v);return localStorage.getItem(k)}catch(e){return null}};
+const ini=n=>n.split(/\s+/).map(w=>w[0]).join("").slice(0,2).toUpperCase();
+let board=null,rep=ls("rep")||"",tab="call",rate=ls("rate")||"",open={};
 async function load(){
-  const rep=$("#rep").value, rate=$("#rate").value;
-  const qs=new URLSearchParams();if(rep)qs.set("rep",rep);if(rate)qs.set("rate",rate);
-  const r=await fetch("/api/board"+(qs.toString()?"?"+qs:""));
-  board=await r.json();
-  if(!$("#rate").value)$("#rate").value=board.hourly_rate;
-  $("#rateNote").textContent=board.hourly_rate===board.hourly_rate_default?`not an agreed figure; change it to see the calls re-rank`:`default is £${board.hourly_rate_default}/h; your change only affects this screen`;
-  if($("#rep").options.length===1){for(const p of board.reps){const o=document.createElement("option");o.value=p.rep_id;o.textContent=`${p.rep_id} · ${p.rep_name}${p.team?" · "+p.team:""}`;$("#rep").append(o)}
-    const saved=store("rep");if(saved&&!rep){$("#rep").value=saved;return load()}}
+  const qs=rate?`?rate=${encodeURIComponent(rate)}`:"";
+  board=await (await fetch("/api/board"+qs)).json();
   render();
 }
+function rows(){return rep?board.rows.filter(r=>r.rep_id===rep):board.rows}
 function render(){
-  const rows=board.rows, n=a=>a==="all"?rows.length:rows.filter(r=>r.action===a).length;
-  $("#tabs").innerHTML=ACTIONS.map(([a,l])=>`<button class="tab" aria-pressed="${a===tab}" data-a="${a}">${l} ${n(a)}</button>`).join("");
-  const worth=rows.filter(r=>r.action==="call").reduce((s,r)=>s+Math.max(r.value_gbp||0,0),0);
-  $("#src").textContent=`${board.source} · ${rows.length} sold-outs · calls worth ~£${worth.toFixed(0)} · rep time £${board.hourly_rate}/h (assumption)`;
-  const shown=tab==="all"?rows:rows.filter(r=>r.action===tab);
-  $("#list").innerHTML=shown.length?shown.map(card).join(""):`<p class="empty">Nothing here.</p>`;
+  const rs=rows(),n=a=>rs.filter(r=>r.action===a).length;
+  const r=board.reps.find(x=>x.rep_id===rep);
+  $("#whoAv").textContent=r?ini(r.rep_name):"All";
+  $("#whoName").textContent=r?r.rep_name:"All reps";
+  $("#whoSub").textContent=r?`${r.team} · ${rs.length} sold-out${rs.length==1?"":"s"} today`:`${board.rows.length} sold-outs today · tap to pick a rep`;
+  const calls=rs.filter(x=>x.action==="call"),worth=calls.reduce((s,x)=>s+Math.max(x.value_gbp||0,0),0);
+  const saved=rs.filter(x=>x.action==="skip").length*12;
+  $("#sum").innerHTML=`<div class="stat call"><div class="n">${calls.length}</div><div class="l">to call</div></div>
+  <div class="stat call"><div class="n">£${worth.toFixed(0)}</div><div class="l">calls worth</div></div>
+  <div class="stat"><div class="n">${saved>=60?(saved/60).toFixed(1)+"h":saved+"m"}</div><div class="l">time saved</div></div>`;
+  if(!rs.some(x=>x.action===tab)){const f=TABS.find(([a])=>n(a));if(f)tab=f[0]}
+  $("#seg").innerHTML=TABS.map(([a,l])=>`<button role="tab" data-tab="${a}" aria-pressed="${a===tab}">${l}<span>${n(a)}</span></button>`).join("");
+  $("#note").innerHTML=`Rep time £<input id="rate" type="number" inputmode="decimal" min="0" max="500" value="${esc(board.hourly_rate)}">/h <b>assumption</b> · not an agreed figure, change it to see calls re-rank · ${esc(board.source)}`;
+  const shown=rs.filter(x=>x.action===tab);
+  $("#list").innerHTML=shown.length?shown.map(card).join(""):`<p class="empty">Nothing in this list.</p>`;
 }
-function card(r,i){
-  const q=(r.quotes||[]).slice(0,2).map(f=>`<blockquote>“${esc(f.quote)}”<small>${SRC[f.source]||f.source}, ${esc(f.date)}</small></blockquote>`).join("");
-  const mk=r.mark?`<div class="marked">Marked: ${esc(MARKS[r.mark.mark]||r.mark.mark)} — “${esc(r.mark.reason)}” (${esc(r.mark.marked_by)})</div>`:"";
-  const flags=(r.all_flags||[]).map(f=>`<li>${esc(f.flag.replace(/_/g," "))}: “${esc(f.quote)}” <i>(${SRC[f.source]||f.source}, ${esc(f.date)})</i></li>`).join("");
-  return `<article class="card">
-  <div class="top"><div><div class="name">${esc(r.merchant)}</div>
-  <div class="meta">${esc(r.city)} · ${esc(r.category)} · band ${esc(r.band)} · ${esc(r.deal_id)} · sold out ${esc(r.sold_out_date)}</div></div>
-  <span class="pill ${r.action}">${r.value_gbp!=null&&r.action==="call"?"~£"+Math.max(r.value_gbp,0).toFixed(0):r.action}</span></div>
-  <div class="head">${esc(r.headline)}</div><p class="why">${esc(r.why)}</p>${q}${mk}
-  <details><summary>How we worked it out</summary><p>${esc(r.maths||"No value estimate needed.")}</p>
-  ${r.ai_verdict?`<p>AI read of the notes: ${esc(r.ai_verdict)}</p>`:""}
-  ${flags?`<p>Everything flagged in the text (${esc(r.flags_backend)}):</p><ul>${flags}</ul>`:`<p>No flags in the last 12 months of text (${esc(r.flags_backend)}).</p>`}</details>
-  <button class="link" data-mark="${i}">${r.mark?"Change mark":"Mark this merchant"}</button>
-  <form class="markbox" id="mb${i}" data-mid="${esc(r.merchant_id)}">
-    <select name="mark">${Object.entries(MARKS).map(([k,v])=>`<option value="${k}">${v}</option>`).join("")}</select>
-    <textarea name="reason" rows="2" placeholder="Why? One sentence, e.g. 'Owner said she's fully booked till March.'" required></textarea>
-    <input name="marked_by" placeholder="Your rep id, e.g. R10" value="${esc(store("rep")||"")}" required>
-    <button class="primary" type="submit">Save mark</button>
-  </form></article>`;
+function card(r){
+  const k=r.merchant_id+r.deal_id;
+  const gbp=r.action==="call"&&r.value_gbp!=null?`<span class="gbp">£${Math.max(r.value_gbp,0).toFixed(0)}</span>`:"";
+  const q=(r.quotes||[]).slice(0,1).map(f=>`<blockquote>“${esc(f.quote)}”<small>${SRC[f.source]||f.source} · ${esc(f.date)}</small></blockquote>`).join("");
+  const mk=r.mark?`<div class="marked">Marked by ${esc(r.mark.marked_by)}: ${esc(MARKS[r.mark.mark]||r.mark.mark)} — “${esc(r.mark.reason)}”</div>`:"";
+  const fl=(r.all_flags||[]).map(f=>`<li><b>${esc(f.flag.replace(/_/g," "))}</b>: “${esc(f.quote)}” <i>(${SRC[f.source]||f.source}, ${esc(f.date)})</i></li>`).join("");
+  return `<article class="card ${r.action}" data-k="${esc(k)}">
+  <div class="act"><h2>${esc(r.headline.replace(/, worth ~£\d+/,""))}</h2>${gbp}</div>
+  <div class="m">${esc(r.merchant)}</div>
+  <div class="meta">${esc(r.city)} · ${esc(r.category)} · size ${esc(r.band)} · ${esc(r.deal_id)}${board.reps.length&&!rep?" · "+esc(r.rep_id):""}</div>
+  <p class="why">${esc(r.why)}</p>${q}${mk}
+  <div class="more ${open[k]==="more"?"open":""}"><div>${esc(r.maths||"No £ estimate needed.")}</div>
+   ${r.ai_verdict?`<p>AI read of the notes: ${esc(r.ai_verdict)}</p>`:""}
+   ${fl?`<ul>${fl}</ul>`:`<p>No flags in the last 12 months of text.</p>`}</div>
+  <form class="mark ${open[k]==="mark"?"open":""}" data-mid="${esc(r.merchant_id)}">
+   <div class="opts">${Object.entries(MARKS).map(([v,l],i)=>`<label><input type="radio" name="mark" value="${v}" ${i?"":"checked"}>${l}</label>`).join("")}</div>
+   <textarea name="reason" rows="2" placeholder="Why, in one sentence" required></textarea>
+   <input type="text" name="marked_by" placeholder="Your rep id, e.g. R10" value="${esc(rep)}" required>
+   <button class="primary" type="submit">Save mark</button></form>
+  <div class="foot"><button class="ghost" data-open="more" data-k="${esc(k)}">${open[k]==="more"?"Hide":"Why & £ maths"}</button>
+  <button class="ghost" data-open="mark" data-k="${esc(k)}">${r.mark?"Change mark":"Mark merchant"}</button></div></article>`;
+}
+function sheet(on){document.body.classList.toggle("open-sheet",on);if(on){$("#q").value="";reps("");}}
+function reps(q){
+  const cnt={};board.rows.forEach(r=>cnt[r.rep_id]=(cnt[r.rep_id]||0)+1);
+  q=q.trim().toLowerCase();
+  const list=board.reps.filter(r=>!q||(r.rep_name+" "+r.team+" "+r.rep_id).toLowerCase().includes(q));
+  const teams={};list.forEach(r=>(teams[r.team]=teams[r.team]||[]).push(r));
+  let h=q?"":`<button class="rep ${rep?"":"sel"}" data-rep=""><span class="av">All</span><span>All reps</span><span class="cnt">${board.rows.length}</span></button>`;
+  for(const t of Object.keys(teams).sort()){
+    h+=`<div class="team">${esc(t)}</div>`+teams[t].sort((a,b)=>(cnt[b.rep_id]||0)-(cnt[a.rep_id]||0)||a.rep_name.localeCompare(b.rep_name)).map(r=>
+    `<button class="rep ${cnt[r.rep_id]?"":"zero"} ${r.rep_id===rep?"sel":""}" data-rep="${r.rep_id}"><span class="av">${ini(r.rep_name)}</span><span>${esc(r.rep_name)}</span><span class="cnt">${cnt[r.rep_id]||0}</span></button>`).join("");
+  }
+  $("#reps").innerHTML=h||`<p class="empty">No rep matches.</p>`;
 }
 document.addEventListener("click",e=>{
-  const t=e.target.closest("[data-a]");if(t){tab=t.dataset.a;render();return}
-  const m=e.target.closest("[data-mark]");if(m){$("#mb"+m.dataset.mark).classList.toggle("open")}
+  const t=e.target.closest("[data-tab]");if(t){tab=t.dataset.tab;render();scrollTo({top:0});return}
+  if(e.target.closest("#who")){sheet(true);return}
+  if(e.target.id==="scrim"){sheet(false);return}
+  const r=e.target.closest("[data-rep]");if(r){rep=r.dataset.rep;ls("rep",rep);sheet(false);tab="call";render();scrollTo({top:0});return}
+  const o=e.target.closest("[data-open]");if(o){const k=o.dataset.k;open[k]=open[k]===o.dataset.open?null:o.dataset.open;render();return}
 });
+$("#q").addEventListener("input",e=>reps(e.target.value));
+let rt;document.addEventListener("input",e=>{if(e.target.id!=="rate")return;clearTimeout(rt);rt=setTimeout(()=>{rate=e.target.value;ls("rate",rate);load()},500)});
 document.addEventListener("submit",async e=>{
-  e.preventDefault();const f=e.target, fd=new FormData(f);
-  const body={merchant_id:f.dataset.mid,mark:fd.get("mark"),reason:fd.get("reason"),marked_by:fd.get("marked_by")};
-  const b=f.querySelector("button");b.disabled=true;b.textContent="Saving…";
-  const r=await fetch("/api/mark",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
-  const j=await r.json();
-  if(!r.ok){b.disabled=false;b.textContent="Save mark";alert(j.error);return}
-  await load();
+  e.preventDefault();const f=e.target,fd=new FormData(f),b=f.querySelector("button");
+  b.disabled=true;b.textContent="Saving…";
+  const res=await fetch("/api/mark",{method:"POST",headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({merchant_id:f.dataset.mid,mark:fd.get("mark"),reason:fd.get("reason"),marked_by:fd.get("marked_by")})});
+  const j=await res.json();
+  if(!res.ok){b.disabled=false;b.textContent="Save mark";b.insertAdjacentHTML("afterend",`<small style="color:#b33">${esc(j.error)}</small>`);return}
+  open={};await load();
 });
-$("#rep").addEventListener("change",()=>{store("rep",$("#rep").value);load()});
-let rt;$("#rate").addEventListener("input",()=>{clearTimeout(rt);rt=setTimeout(load,400)});
 load();
 </script>
 </body>

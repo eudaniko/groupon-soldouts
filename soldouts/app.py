@@ -58,7 +58,32 @@ class State:
         if rows is None:
             rows = list(csv.DictReader(open(DEMO, newline="")))
         self.cache = {"at": time.time(), "rows": rows, "source": source}
+        self.queue_llm(rows)
         return rows, source
+
+    def _llm_worker(self, mids, on_date):
+        """Background: read new merchants' text with the LLM once, cache it. The page uses rules until then."""
+        for mid in mids:
+            try:
+                items = texts.load(config.PACK, {mid})
+                res = detect.detect({mid: items}, "llm", on_date)
+                with _lock:
+                    self.flags_llm.update(res)
+                    (config.DATA / "flags_llm.json").write_text(json.dumps(self.flags_llm, indent=1, ensure_ascii=False))
+            except (Exception, SystemExit) as e:  # budget, network: keep the rules flags
+                print("llm flags skipped for", mid, e, file=sys.stderr)
+                if isinstance(e, SystemExit):
+                    return
+        self.llm_running = False
+
+    def queue_llm(self, rows):
+        if getattr(self, "llm_running", False) or not sandbox.available() or not config.PACK.exists():
+            return
+        todo = sorted({r["merchant_id"] for r in rows} - set(self.flags_llm))
+        if todo:
+            self.llm_running = True
+            on_date = (rows[0].get("sold_out_at") or date.today().isoformat())[:10]
+            threading.Thread(target=self._llm_worker, args=(todo, on_date), daemon=True).start()
 
     def flags_for(self, mid, on_date):
         if mid in self.flags_llm:

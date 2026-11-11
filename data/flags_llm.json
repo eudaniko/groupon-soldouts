@@ -1024,5 +1024,599 @@
   "dropped": [],
   "verdict": "Don't call now: the merchant appears to be on summer holidays (the June note reads 'summer hols... think no'), so wait until they're back; the March note shows they were happy to raise the cap, but that is older evidence and the June note takes priority.",
   "backend": "llm"
+ },
+ "M10008": {
+  "flags": [
+   {
+    "flag": "capacity_limit",
+    "item_id": "N-010952",
+    "quote": "she did say two therapists might need a holiday soon!",
+    "source": "rep_note",
+    "date": "2026-04-15"
+   },
+   {
+    "flag": "wants_more",
+    "item_id": "N-014427",
+    "quote": "She's got 2 rooms now after the refurb and wants to fill every one of them, ha!",
+    "source": "rep_note",
+    "date": "2026-10-11"
+   },
+   {
+    "flag": "quality_risk",
+    "item_id": "RF-004210",
+    "quote": "CX called, says she waited 40 mins past her slot before anyone saw her.",
+    "source": "refund_reason",
+    "date": "2026-09-17"
+   },
+   {
+    "flag": "temporarily_away",
+    "item_id": "DAR-002820",
+    "quote": "I'm out of the office on a course until Monday and will have limited access to email.",
+    "source": "alert_reply",
+    "date": "2026-10-24"
+   }
+  ],
+  "dropped": [],
+  "verdict": "Call, but not yet: the merchant wants more volume and the rep has already agreed a cap of 1945, so a call is warranted; however, the latest CX-reported 40-minute wait and the owner being on a course until Monday suggest confirming capacity and service levels before raising anything further.",
+  "backend": "llm"
+ },
+ "M10011": {
+  "flags": [
+   {
+    "flag": "auto_topup",
+    "item_id": "DAR-002633",
+    "quote": "Our monthly top-up is already scheduled for July, so no link-clicking requied from me.",
+    "source": "alert_reply",
+    "date": "2026-09-24"
+   }
+  ],
+  "dropped": [],
+  "verdict": "Don't call: the merchant says the cap tops itself up monthly, and the most recent item confirms it, so a restock call isn't needed; the earlier wants_more and unanswered-call notes are superseded.",
+  "backend": "llm"
+ },
+ "M10013": {
+  "flags": [],
+  "dropped": [],
+  "verdict": "Don't call yet, but also don't drop it: the only recent item is an unanswered phone attempt (line busy, then no answer) and a call has been pencilled in for Thursday, so reach the merchant then; the single positive review from January gives no evidence on capacity, restock appetite, or service quality.",
+  "backend": "llm"
+ },
+ "M10066": {
+  "flags": [
+   {
+    "flag": "wants_more",
+    "item_id": "DAR-000950",
+    "quote": "Please raise to 45, we'll manage with two therapists.",
+    "source": "alert_reply",
+    "date": "2025-12-23"
+   },
+   {
+    "flag": "quality_risk",
+    "item_id": "RV-009400",
+    "quote": "Pushy and rude. When I asked about the extra charge Duc just said 'read the terms' and walked off.",
+    "source": "review",
+    "date": "2026-09-20"
+   },
+   {
+    "flag": "temporarily_away",
+    "item_id": "N-013666",
+    "quote": "Left vm for Duc about the renewal, no answer. Will try again Saturday morning.",
+    "source": "rep_note",
+    "date": "2026-09-02"
+   }
+  ],
+  "dropped": [],
+  "verdict": "Don't call yet: the merchant asked for 45 in December but the latest notes show an agreed new deal at a lower cap with no weekends, a recent rude-service review, and an unanswered renewal call, so confirm the renewal and service issues before raising any cap.",
+  "backend": "llm"
+ },
+ "M10563": {
+  "flags": [
+   {
+    "flag": "no_restock_wanted",
+    "item_id": "DAR-000774",
+    "quote": "I am not going to raise the cap, and the button in your email just makes me feel nagged.",
+    "source": "alert_reply",
+    "date": "2025-12-06"
+   },
+   {
+    "flag": "wants_more",
+    "item_id": "N-013109",
+    "quote": "Gethin said yes to 12, was lovely about the whole thing",
+    "source": "rep_note",
+    "date": "2026-08-05"
+   }
+  ],
+  "dropped": [],
+  "verdict": "Don't call: the most recent item shows Gethin said yes to 12 and is happy, but the earlier merchant reply declined to raise the cap and asked to be stopped, so a restock call is unlikely to be welcome.",
+  "backend": "llm"
+ },
+ "M10642": {
+  "flags": [
+   {
+    "flag": "auto_topup",
+    "item_id": "DAR-002760",
+    "quote": "As we're already on the automatic monthly top-up, no action is required on our side.",
+    "source": "alert_reply",
+    "date": "2026-10-15"
+   },
+   {
+    "flag": "wants_more",
+    "item_id": "N-013708",
+    "quote": "Steve asked if we could do a Christmas version of the tapas for two as well.",
+    "source": "rep_note",
+    "date": "2026-09-05"
+   },
+   {
+    "flag": "quality_risk",
+    "item_id": "RF-002362",
+    "quote": "Cx claims owner Steve cancelled by WhatsApp the night before, screenshot attached. No rebooking possible.",
+    "source": "refund_reason",
+    "date": "2026-01-26"
+   }
+  ],
+  "dropped": [],
+  "verdict": "Don't call for a restock: the cap already tops itself up monthly (DAR-002760), and the sales team's own note says no chase is needed. The live opportunity is the Christmas tapas-for-two version Steve asked about on 5 Sept, so call about scoping that new deal rather than a restock; keep in mind the January refund claim of a last-minute cancellation when deciding how far to push volume.",
+  "backend": "llm"
+ },
+ "M10700": {
+  "flags": [
+   {
+    "flag": "wants_more",
+    "item_id": "N-014785",
+    "quote": "quick one. yes. 25",
+    "source": "rep_note",
+    "date": "2026-10-27"
+   },
+   {
+    "flag": "capacity_limit",
+    "item_id": "N-012352",
+    "quote": "2 rooms all booked but raised to approx 15 anyway",
+    "source": "rep_note",
+    "date": "2026-06-24"
+   },
+   {
+    "flag": "temporarily_away",
+    "item_id": "N-014817",
+    "quote": "no changes. ring in 6 wks",
+    "source": "rep_note",
+    "date": "2026-10-29"
+   }
+  ],
+  "dropped": [],
+  "verdict": "Don't call now: the most recent note says ring in 6 weeks, so call back then; the merchant agreed to a cap of 25 on 27 Oct, but the 'ring in 6 wks' note on 29 Oct signals a deferred call rather than an immediate restock.",
+  "backend": "llm"
+ },
+ "M10783": {
+  "flags": [
+   {
+    "flag": "alert_link_trouble",
+    "item_id": "DAR-002786",
+    "quote": "If it's not gone through let me know and I'll try again from the laptop.",
+    "source": "alert_reply",
+    "date": "2026-10-19"
+   },
+   {
+    "flag": "quality_risk",
+    "item_id": "RV-009467",
+    "quote": "Excellent value and the staff couldn't do enough for us.",
+    "source": "review",
+    "date": "2026-09-23"
+   }
+  ],
+  "dropped": [],
+  "verdict": "Don't call yet: the merchant's latest reply shows uncertainty about whether the Deal Alert link actually went through, so confirm the link works first; the only review is positive, so quality is not a concern, but the flag on the quality_risk is incorrect as the review is praise and should not count against restocking.",
+  "backend": "llm"
+ },
+ "M10813": {
+  "flags": [
+   {
+    "flag": "auto_topup",
+    "item_id": "DAR-001198",
+    "quote": "the automatic top-up runs every Thursday and takes us up to 25 again",
+    "source": "alert_reply",
+    "date": "2026-01-27"
+   },
+   {
+    "flag": "temporarily_away",
+    "item_id": "N-012112",
+    "quote": "N retiring end of November. buyer taking over. need his details asap",
+    "source": "rep_note",
+    "date": "2026-06-13"
+   }
+  ],
+  "dropped": [],
+  "verdict": "Don't call: the merchant said the cap auto-tops up every Thursday so no restock call is needed, and the contact N is retiring end of November with a buyer taking over, so get the new contact's details rather than calling N.",
+  "backend": "llm"
+ },
+ "M10982": {
+  "flags": [
+   {
+    "flag": "capacity_limit",
+    "item_id": "RF-002230",
+    "quote": "Merchant has 2 rooms and all are booked solid, per Rachel. Cust cannot get in before voucher ends.",
+    "source": "refund_reason",
+    "date": "2026-01-13"
+   },
+   {
+    "flag": "temporarily_away",
+    "item_id": "DAR-002369",
+    "quote": "I am out of the office and will return on Thursday.",
+    "source": "alert_reply",
+    "date": "2026-08-10"
+   }
+  ],
+  "dropped": [],
+  "verdict": "Don't call yet: the merchant's rooms are booked solid with 8-week waits, so raising the cap risks more refunds, and Rachel's contact is away until Thursday; if you must call, reach Jade after Rachel returns.",
+  "backend": "llm"
+ },
+ "M11077": {
+  "flags": [
+   {
+    "flag": "temporarily_away",
+    "item_id": "RF-002369",
+    "quote": "Place was shut when we arrived, no explanation. Found out later from a neighbour that the owner was in hospital.",
+    "source": "refund_reason",
+    "date": "2026-01-26"
+   },
+   {
+    "flag": "wants_more",
+    "item_id": "N-012332",
+    "quote": "Owner likes having the top-up schedule in place but wanted a bigger step this time, so we set 26 by hand.",
+    "source": "rep_note",
+    "date": "2026-06-23"
+   }
+  ],
+  "dropped": [],
+  "verdict": "Don't call yet: the owner was in hospital in January and the latest notes show a pending February deal, so check with Molly on Thursday about the new deal before any restock call, and only then consider the earlier 26-cap request.",
+  "backend": "llm"
+ },
+ "M11149": {
+  "flags": [
+   {
+    "flag": "capacity_limit",
+    "item_id": "RF-004256",
+    "quote": "confirmed no free massage slots until April. Voucher expires before then so refunding in full.",
+    "source": "refund_reason",
+    "date": "2026-09-22"
+   },
+   {
+    "flag": "no_restock_wanted",
+    "item_id": "DAR-001284",
+    "quote": "Leave the cap at 10. We can't take more bookings without making the waiting time dreadful again.",
+    "source": "alert_reply",
+    "date": "2026-02-12"
+   },
+   {
+    "flag": "quality_risk",
+    "item_id": "RV-006767",
+    "quote": "SOLD FAR MORE THAN THEY COULD DELIVER. Four phone calls, two emails. No slots before the expiry date.",
+    "source": "review",
+    "date": "2026-04-28"
+   }
+  ],
+  "dropped": [],
+  "verdict": "Don't call: Ollie has repeatedly and recently refused any cap increase (July and February), has only 3 rooms, and recent reviews and refunds show customers unable to book before expiry, so more volume would mean more refunds.",
+  "backend": "llm"
+ },
+ "M11165": {
+  "flags": [
+   {
+    "flag": "alert_link_trouble",
+    "item_id": "DAR-002803",
+    "quote": "Not sure how to change things on the website, so could someone phone me?",
+    "source": "alert_reply",
+    "date": "2026-10-21"
+   },
+   {
+    "flag": "wants_more",
+    "item_id": "N-010419",
+    "quote": "Cap lifted to 90, and she's asked whether we can do something for the school holidays too.",
+    "source": "rep_note",
+    "date": "2026-03-16"
+   }
+  ],
+  "dropped": [],
+  "verdict": "Call, but not to restock: Wei is asking for help changing her cap on the website, so a phone call is worth making now, and her most recent demand signal (cap of 90 and school holiday interest) supports it. Keep the cap at 50 or lower as she wants groups of four max, and check whether a second deal in 7 weeks suits her.",
+  "backend": "llm"
+ },
+ "M11283": {
+  "flags": [
+   {
+    "flag": "temporarily_away",
+    "item_id": "DAR-001843",
+    "quote": "Neil is on a course until Thursday and can't reply before then.",
+    "source": "alert_reply",
+    "date": "2026-05-08"
+   }
+  ],
+  "dropped": [],
+  "verdict": "Don't call yet: the merchant's own auto-reply says Neil is away on a course until Thursday, so wait until he's back, then ask him directly about restocking rather than assuming capacity.",
+  "backend": "llm"
+ },
+ "M11315": {
+  "flags": [
+   {
+    "flag": "capacity_limit",
+    "item_id": "DAR-001365",
+    "quote": "Our diary is rammed through to September and I'm not adding to it.",
+    "source": "alert_reply",
+    "date": "2026-02-20"
+   },
+   {
+    "flag": "no_restock_wanted",
+    "item_id": "DAR-001182",
+    "quote": "no ta. cant fit them in. dont call",
+    "source": "alert_reply",
+    "date": "2026-01-26"
+   },
+   {
+    "flag": "quality_risk",
+    "item_id": "RV-008999",
+    "quote": "Literally rang every Tuesday for a month. They just kept saying 'we're slammed'. Then my voucher expired. Cheers.",
+    "source": "review",
+    "date": "2026-08-28"
+   },
+   {
+    "flag": "temporarily_away",
+    "item_id": "DAR-001266",
+    "quote": "I'm travelling for 4 weeks and will pick this up on Tuesday.",
+    "source": "alert_reply",
+    "date": "2026-02-10"
+   }
+  ],
+  "dropped": [],
+  "verdict": "Don't call: the merchant has repeatedly refused more volume (diary rammed through September, 'dont call', 'Cap stays'), has a two-person team and 2 rooms, and customers are reporting unredeemable vouchers, so restocking would mainly generate refunds and complaints.",
+  "backend": "llm"
+ },
+ "M11386": {
+  "flags": [
+   {
+    "flag": "capacity_limit",
+    "item_id": "DAR-001931",
+    "quote": "We’re at capacity and the last lot of vouchers took us weeks to clear. Cap stays.",
+    "source": "alert_reply",
+    "date": "2026-05-19"
+   },
+   {
+    "flag": "no_restock_wanted",
+    "item_id": "DAR-001931",
+    "quote": "No. We’re at capacity and the last lot of vouchers took us weeks to clear. Cap stays.",
+    "source": "alert_reply",
+    "date": "2026-05-19"
+   },
+   {
+    "flag": "quality_risk",
+    "item_id": "RV-009292",
+    "quote": "Overbooked and under-staffed. With three staff they were never going to cope with 15 vouchers.",
+    "source": "review",
+    "date": "2026-09-13"
+   }
+  ],
+  "dropped": [],
+  "verdict": "Don't call: the merchant has repeatedly and most recently (19 May 2026) refused any cap increase, is at capacity with only three staff, and customers report refunds for lack of availability and overbooking, so more volume would likely mean more refunds and bad reviews.",
+  "backend": "llm"
+ },
+ "M11461": {
+  "flags": [
+   {
+    "flag": "capacity_limit",
+    "item_id": "N-014710",
+    "quote": "says every Thursday is booked solid now",
+    "source": "rep_note",
+    "date": "2026-10-23"
+   },
+   {
+    "flag": "wants_more",
+    "item_id": "N-011405",
+    "quote": "We've moved the cap from 20 to 54, and she wants me to ring again in 6 weeks to see how the diary's looking.",
+    "source": "rep_note",
+    "date": "2026-05-10"
+   },
+   {
+    "flag": "quality_risk",
+    "item_id": "RV-008233",
+    "quote": "Over a month to get seen. Won't repeat.",
+    "source": "review",
+    "date": "2026-07-16"
+   }
+  ],
+  "dropped": [],
+  "verdict": "Don't call yet: the latest rep note (N-014710, 23 Oct) says every Thursday is booked solid at the new cap of 198, so the merchant is at capacity and raising it further risks refunds; the 16 Jul review about a month-long wait supports this, so wait for the diary to open up.",
+  "backend": "llm"
+ },
+ "M11899": {
+  "flags": [
+   {
+    "flag": "auto_topup",
+    "item_id": "N-009358",
+    "quote": "L. has the top-up set to add vouchers every 7 weeks so the sell-out basically fixes itself",
+    "source": "rep_note",
+    "date": "2026-01-18"
+   }
+  ],
+  "dropped": [],
+  "verdict": "Don't call: the merchant's cap tops itself up every 7 weeks per the 2026-01-18 rep note, so a restock call is unnecessary and was a wasted call last time.",
+  "backend": "llm"
+ },
+ "M12108": {
+  "flags": [
+   {
+    "flag": "wants_more",
+    "item_id": "N-008546",
+    "quote": "upped cap to 23 and asked if we could promote weekends more",
+    "source": "rep_note",
+    "date": "2025-12-07"
+   },
+   {
+    "flag": "quality_risk",
+    "item_id": "RV-008991",
+    "quote": "Place was freezing, robes were damp, and then they tried to charge me £6 for a bottle of water I was told was complimentary.",
+    "source": "review",
+    "date": "2026-08-27"
+   },
+   {
+    "flag": "temporarily_away",
+    "item_id": "RF-003872",
+    "quote": "Moving to Leeds in October, won't get to use it",
+    "source": "refund_reason",
+    "date": "2026-08-04"
+   }
+  ],
+  "dropped": [],
+  "verdict": "Something else: don't call yet. The most recent items are a 2-star review about cold, damp robes and a disputed £6 water charge, plus a 2026-05 refund for dizziness after a seaweed wrap that may be a reaction. Those point to service and possible safety issues, so more volume could mean more refunds. The November note asking for a higher cap (23) is older and outweighed by this, so review the complaints first.",
+  "backend": "llm"
+ },
+ "M12206": {
+  "flags": [
+   {
+    "flag": "capacity_limit",
+    "item_id": "RF-002143",
+    "quote": "Merchant has 2 rooms and all are booked solid, per Ollie.",
+    "source": "refund_reason",
+    "date": "2026-01-03"
+   },
+   {
+    "flag": "no_restock_wanted",
+    "item_id": "DAR-001817",
+    "quote": "Yes yes it sold out, brilliant, now please stop telling me.",
+    "source": "alert_reply",
+    "date": "2026-04-29"
+   },
+   {
+    "flag": "wants_more",
+    "item_id": "N-014316",
+    "quote": "Ollie wants price down to £25. told her £30 min",
+    "source": "rep_note",
+    "date": "2026-10-06"
+   },
+   {
+    "flag": "temporarily_away",
+    "item_id": "DAR-002360",
+    "quote": "Having my knee done so I'm off work and away from the computer until Monday.",
+    "source": "alert_reply",
+    "date": "2026-08-09"
+   }
+  ],
+  "dropped": [],
+  "verdict": "Don't call for a restock now: the merchant has repeatedly said they are at capacity and asked to be left alone, and the most recent contact (DAR-002360) says they are off work until Monday, so call after they return and only if the cap can be raised without more refunds.",
+  "backend": "llm"
+ },
+ "M12207": {
+  "flags": [
+   {
+    "flag": "no_restock_wanted",
+    "item_id": "DAR-000964",
+    "quote": "we'll be keeping it that way. Last time we went over, customers wated ages and left us a few unhappy reviews",
+    "source": "alert_reply",
+    "date": "2025-12-25"
+   },
+   {
+    "flag": "capacity_limit",
+    "item_id": "RF-002462",
+    "quote": "merchant fully booked, cust tried 3 times by phone + online. earliest 4 wks. expiry too soon. refunded",
+    "source": "refund_reason",
+    "date": "2026-02-08"
+   },
+   {
+    "flag": "quality_risk",
+    "item_id": "RV-004447",
+    "quote": "We got four dry sandwiches, one scone each and a teapot to share. Staff wouldn't even bring extra hot water without asking twice.",
+    "source": "review",
+    "date": "2025-12-27"
+   },
+   {
+    "flag": "temporarily_away",
+    "item_id": "DAR-001036",
+    "quote": "I'm taking a long weekend and will be back on Saturday. Replies may be delayed",
+    "source": "alert_reply",
+    "date": "2026-01-07"
+   }
+  ],
+  "dropped": [],
+  "verdict": "Don't call: the merchant has said in writing they want to stay sold out (DAR-000964, most recent sold-out stance), they are at capacity with delays, and there are service complaints, so more volume would risk refunds and bad reviews.",
+  "backend": "llm"
+ },
+ "M12634": {
+  "flags": [
+   {
+    "flag": "no_restock_wanted",
+    "item_id": "N-014744",
+    "quote": "She's keeping the gel nails capped at 10 deliberately, doesn't want to be known for slow booking. No raise, no pressure from me.",
+    "source": "rep_note",
+    "date": "2026-10-25"
+   },
+   {
+    "flag": "capacity_limit",
+    "item_id": "DAR-001019",
+    "quote": "just just her here and 2 rooms, and the last time we let the numbers run away the whole diary went to pieces.",
+    "source": "alert_reply",
+    "date": "2026-01-01"
+   },
+   {
+    "flag": "quality_risk",
+    "item_id": "RV-008676",
+    "quote": "Booked for Saturday and they rang the day before to say they'd double-booked.",
+    "source": "review",
+    "date": "2026-08-10"
+   }
+  ],
+  "dropped": [],
+  "verdict": "Don't call: Bev has repeatedly and deliberately refused any cap raise (most recently October 2026), she is a one-person team in two rooms, and raising volume would likely mean more refunds and bad reviews.",
+  "backend": "llm"
+ },
+ "M12765": {
+  "flags": [
+   {
+    "flag": "temporarily_away",
+    "item_id": "DAR-002416",
+    "quote": "I'm out walking the Pennine Way for a week and back on Wednesday, so I'll be in touch then.",
+    "source": "alert_reply",
+    "date": "2026-08-16"
+   },
+   {
+    "flag": "capacity_limit",
+    "item_id": "N-013825",
+    "quote": "Everything's full for 6 weeks, Josh is off sick on top of that",
+    "source": "rep_note",
+    "date": "2026-09-11"
+   },
+   {
+    "flag": "no_restock_wanted",
+    "item_id": "N-013825",
+    "quote": "he's not interested in raising the cap right now",
+    "source": "rep_note",
+    "date": "2026-09-11"
+   },
+   {
+    "flag": "quality_risk",
+    "item_id": "RV-008121",
+    "quote": "they rang the day before to say they'd double-booked",
+    "source": "review",
+    "date": "2026-07-10"
+   }
+  ],
+  "dropped": [],
+  "verdict": "Don't call now: Wei is walking the Pennine Way (back Wednesday per the 16 Aug reply), the 11 Sep note says everything is full for 6 weeks and he doesn't want the cap raised, and recent reviews and refunds show booking failures, so only revisit in September as the diary note says, and only if the booking backlog has cleared.",
+  "backend": "llm"
+ },
+ "M12786": {
+  "flags": [
+   {
+    "flag": "capacity_limit",
+    "item_id": "RF-002917",
+    "quote": "booking cancelled by merchant, cust unable to rebook as nothing free before voucher expiry",
+    "source": "refund_reason",
+    "date": "2026-04-03"
+   },
+   {
+    "flag": "quality_risk",
+    "item_id": "RF-002245",
+    "quote": "my skin came up in a rash on my chest. wants refund + sent a photo",
+    "source": "refund_reason",
+    "date": "2026-01-14"
+   }
+  ],
+  "dropped": [],
+  "verdict": "Don't call for a restock now: the April spa was full before voucher expiry and a July-era rep note says Femi wanted a cheaper intro price and a 6-week review rather than more volume, while the January rash complaint is a service risk. Revisit at the agreed review point and check the patch-test issue she raised in April first.",
+  "backend": "llm"
  }
 }

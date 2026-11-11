@@ -45,7 +45,7 @@ def build():
 
     schedules = defaultdict(list)
     for r in _rows("auto_replenish_schedules.csv"):
-        schedules[r["deal_id"]].append({k: r[k] for k in ("schedule_id", "start_date", "end_date", "cadence", "top_up_qty", "created_by")})
+        schedules[r["deal_id"]].append({k: r[k] for k in ("schedule_id", "merchant_id", "start_date", "end_date", "cadence", "top_up_qty", "created_by")})
 
     for m in merchants.values():
         m["gp_6m"], m["refunds_6m"] = round(m["gp_6m"], 2), round(m["refunds_6m"], 2)

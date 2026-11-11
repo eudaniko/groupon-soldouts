@@ -1,0 +1,6 @@
+{
+  "_comment": "prod values, temporary, set by merchant ops 2026-03 while the ranking was noisy",
+  "priors": {
+    "restock": {"called": 0.46, "left_alone": 0.43}
+  }
+}

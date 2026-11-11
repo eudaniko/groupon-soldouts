@@ -1,0 +1,12 @@
+{
+  "minutes_per_day": 210,
+  "minutes_per_task": 12,
+  "max_failed_attempts": 3,
+  "suppressed_deal_ids": [
+    "D12006-1",
+    "D12863-5",
+    "D12942-1"
+  ],
+  "suppress_soldout_tasks": false,
+  "suppression_file": "input/suppressions.csv"
+}

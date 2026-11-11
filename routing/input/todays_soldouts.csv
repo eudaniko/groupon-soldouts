@@ -1,0 +1,37 @@
+task_id,merchant_id,merchant_name,deal_id,category,size_band,sold_out_date,value_30d_gbp,callback_promised,do_not_contact,failed_attempts
+T-0001,M11006,The Bloom Aesthetics,D11006-2,Health & Beauty,B,2026-10-25,52.11,0,0,0
+T-0002,M10653,Bloom Wellness Rooms,D10653-1,Health & Beauty,B,2026-10-23,134.38,0,0,0
+T-0003,M11006,The Bloom Aesthetics,D11006-3,Health & Beauty,B,2026-10-14,52.11,0,0,0
+T-0004,M11543,Aster Skin Clinic Harrogate,D11543-1,Health & Beauty,B,2026-10-19,85.37,1,0,0
+T-0005,M10001,Bright Skin & Spa,D10001-2,Health & Beauty,A,2026-10-16,257.67,0,0,0
+T-0006,M12259,Serene Beauty Rooms Sheffield,D12259-1,Health & Beauty,D,2026-10-15,18.16,0,1,0
+T-0007,M10002,The Linen Room,D10002-1,Health & Beauty,A,2026-10-21,178.13,1,0,0
+T-0008,M11688,Fern Beauty Rooms Sheffield,D11688-3,Health & Beauty,A,2026-10-27,199.08,0,0,0
+T-0009,M10766,Fern Hair & Beauty,D10766-3,Health & Beauty,A,2026-10-10,113.16,0,0,0
+T-0010,M10717,The Marigold Brow Bar,D10717-1,Health & Beauty,C,2026-10-20,39.51,1,0,0
+T-0011,M12558,Haven Spa & Sauna York,D12558-1,Health & Beauty,D,2026-10-12,31.93,0,0,3
+T-0012,M12882,Honey Skin Clinic York,D12882-2,Health & Beauty,B,2026-10-16,37.43,0,0,0
+T-0013,M12863,Wren Spa & Sauna York,D12863-1,Health & Beauty,A,2026-10-10,77.62,0,0,0
+T-0014,M10005,Pure Glow Aesthetics,D10005-2,Health & Beauty,B,2026-10-19,215.88,0,0,0
+T-0015,M12198,Velvet Brow Bar Ilkley,D12198-1,Health & Beauty,D,2026-10-13,22.19,0,0,0
+T-0016,M11331,The Serene Massage Studio,D11331-1,Health & Beauty,B,2026-10-08,186.96,0,0,0
+T-0017,M10766,Fern Hair & Beauty,D10766-5,Health & Beauty,A,2026-10-05,113.16,0,0,0
+T-0018,M10004,Kirkgate Sports Massage,D10004-1,Health & Beauty,C,2026-10-23,79.12,0,0,0
+T-0019,M10885,The Clover Brow Bar,D10885-2,Health & Beauty,C,2026-10-20,98.93,0,0,0
+T-0020,M11981,Luxe Brow Bar Harrogate,D11981-5,Health & Beauty,A,2026-10-06,93.41,0,0,0
+T-0021,M12922,Amber Spa & Sauna Ilkley,D12922-4,Health & Beauty,B,2026-10-23,69.79,0,0,0
+T-0022,M11543,Aster Skin Clinic Harrogate,D11543-3,Health & Beauty,B,2026-10-12,85.37,0,0,0
+T-0023,M10921,The Amber Hair & Beauty,D10921-1,Health & Beauty,D,2026-10-15,24.79,0,0,0
+T-0024,M11104,The Haven Nail Studio,D11104-1,Health & Beauty,B,2026-10-27,69.43,0,0,0
+T-0025,M10502,Honey Brow Bar,D10502-3,Health & Beauty,A,2026-10-11,103.59,0,0,0
+T-0026,M10547,The Aster Day Spa,D10547-2,Health & Beauty,B,2026-10-16,160.12,0,0,0
+T-0027,M11902,Opal Lash Studio Ilkley,D11902-1,Health & Beauty,C,2026-10-06,61.85,0,0,0
+T-0028,M10003,Wren Brow & Lash,D10003-1,Health & Beauty,B,2026-10-09,94.88,0,0,0
+T-0029,M12925,Lotus Hair & Beauty Leeds,D12925-1,Health & Beauty,B,2026-10-12,165.33,0,0,0
+T-0030,M10980,The Luxe Spa & Sauna,D10980-1,Health & Beauty,D,2026-10-06,25.92,0,0,0
+T-0031,M12664,Opal Brow Bar Wakefield,D12664-1,Health & Beauty,B,2026-10-10,166.96,0,0,0
+T-0032,M10460,Willow Skin Clinic,D10460-2,Health & Beauty,D,2026-10-14,43.05,0,0,0
+T-0033,M11688,Fern Beauty Rooms Sheffield,D11688-4,Health & Beauty,A,2026-10-11,199.08,0,0,0
+T-0034,M10127,Willow Aesthetics,D10127-2,Health & Beauty,A,2026-10-25,534.92,0,0,0
+T-0035,M12871,Ivy Lash Studio Harrogate,D12871-1,Health & Beauty,A,2026-10-08,135.1,0,0,3
+T-0036,M12902,Serene Lash Studio Ilkley,D12902-2,Health & Beauty,C,2026-10-10,50.23,0,0,0

@@ -1,0 +1,3 @@
+Built: a phone page that tells each rep call / don't bother / something else for every sold-out, with the £ and the merchant's own words, plus a routing switch that stops ~77 tasks a week on deals that top themselves up (auto-replenish, bands B-D), with a 20% holdout.
+Worth: ~15 rep hours a week for certain; £0-40k GP a year depending on what reps do with that time, and under £1k a year at risk. Not £340k: the £11/call is real for manual deals but not for auto-replenished ones or small merchants. First real read 9 Jan, firm by end of Feb.
+Cut: suppressing all low-value C/D tasks (your and Renee's call), band A, automated cap raises (Greg: January), routing reading reps' marks. Details in the README.

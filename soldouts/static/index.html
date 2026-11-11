@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sold-outs today</title>
+<style>
+:root{--bg:#f6f5f2;--card:#fff;--ink:#1b1f1d;--mute:#6b716e;--line:#e4e2dc;--call:#1f7a4d;--call-bg:#e6f3ec;--skip:#7a7f7c;--skip-bg:#efefec;--later:#9a6a00;--later-bg:#fbf1dc;--other:#2a5bb8;--other-bg:#e7eefb;--accent:#53a318}
+@media (prefers-color-scheme:dark){:root{--bg:#121514;--card:#1b1f1d;--ink:#eceeed;--mute:#9aa29e;--line:#2c3230;--call:#5fd197;--call-bg:#173326;--skip:#a2a8a5;--skip-bg:#25292a;--later:#f0c060;--later-bg:#3a2f15;--other:#8fb2ff;--other-bg:#1c2944}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+header{position:sticky;top:0;z-index:2;background:var(--bg);padding:12px 16px 8px;border-bottom:1px solid var(--line)}
+h1{font-size:18px;margin:0 0 8px}
+.row{display:flex;gap:8px;align-items:center}
+select,input,textarea,button{font:inherit;color:inherit}
+select,input,textarea{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:8px}
+select{flex:1;min-width:0}
+.tabs{display:flex;gap:6px;margin-top:8px;overflow-x:auto}
+.tab{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:5px 11px;white-space:nowrap;cursor:pointer}
+.tab[aria-pressed=true]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+main{padding:12px 16px 40px;max-width:720px;margin:0 auto}
+.src{font-size:12px;color:var(--mute);margin:0 0 10px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px}
+.top{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+.name{font-weight:600}
+.meta{font-size:12px;color:var(--mute)}
+.pill{font-size:12px;font-weight:600;padding:3px 8px;border-radius:999px;white-space:nowrap}
+.call{color:var(--call);background:var(--call-bg)}.skip{color:var(--skip);background:var(--skip-bg)}
+.later{color:var(--later);background:var(--later-bg)}.other{color:var(--other);background:var(--other-bg)}
+.head{font-weight:600;margin:8px 0 2px}
+.why{margin:0;color:var(--ink)}
+blockquote{margin:8px 0 0;padding:6px 10px;border-left:3px solid var(--line);color:var(--mute);font-size:14px}
+blockquote small{display:block;font-size:11px;margin-top:2px}
+details{margin-top:8px;font-size:13px;color:var(--mute)}
+summary{cursor:pointer}
+.markbox{margin-top:10px;display:none;gap:6px;flex-direction:column}
+.markbox.open{display:flex}
+button.link{background:none;border:0;color:var(--other);padding:0;margin-top:8px;cursor:pointer;font-size:14px}
+button.primary{background:var(--ink);color:var(--bg);border:0;border-radius:8px;padding:9px}
+.marked{margin-top:8px;font-size:13px;background:var(--other-bg);color:var(--other);padding:6px 8px;border-radius:8px}
+.empty{color:var(--mute);text-align:center;padding:30px 0}
+</style>
+</head>
+<body>
+<header>
+  <h1>Sold-outs today</h1>
+  <div class="row"><select id="rep" aria-label="Rep"><option value="">All reps</option></select></div>
+  <div class="tabs" id="tabs"></div>
+</header>
+<main>
+  <p class="src" id="src">Loading…</p>
+  <div id="list"></div>
+</main>
+<script>
+const ACTIONS=[["call","Call"],["other","Something else"],["later","Later"],["skip","Skip"],["all","All"]];
+const MARKS={no_call:"Don't call on sell-outs",always_call:"Always call on sell-outs",capacity:"Can't take more customers",auto_ok:"Auto top-up handles it"};
+const SRC={rep_note:"Rep note",alert_reply:"Merchant reply to Deal Alert",review:"Customer review",refund_reason:"Refund reason"};
+let board=null, tab="call";
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function store(k,v){try{v===undefined?0:localStorage.setItem(k,v);return localStorage.getItem(k)}catch(e){return null}}
+async function load(){
+  const rep=$("#rep").value;
+  const r=await fetch("/api/board"+(rep?"?rep="+encodeURIComponent(rep):""));
+  board=await r.json();
+  if($("#rep").options.length===1){for(const p of board.reps){const o=document.createElement("option");o.value=p.rep_id;o.textContent=`${p.rep_id} · ${p.rep_name}${p.team?" · "+p.team:""}`;$("#rep").append(o)}
+    const saved=store("rep");if(saved&&!rep){$("#rep").value=saved;return load()}}
+  render();
+}
+function render(){
+  const rows=board.rows, n=a=>a==="all"?rows.length:rows.filter(r=>r.action===a).length;
+  $("#tabs").innerHTML=ACTIONS.map(([a,l])=>`<button class="tab" aria-pressed="${a===tab}" data-a="${a}">${l} ${n(a)}</button>`).join("");
+  const worth=rows.filter(r=>r.action==="call").reduce((s,r)=>s+Math.max(r.value_gbp||0,0),0);
+  $("#src").textContent=`${board.source} · ${rows.length} sold-outs · calls worth ~£${worth.toFixed(0)} · rep time at £${board.hourly_rate}/h`;
+  const shown=tab==="all"?rows:rows.filter(r=>r.action===tab);
+  $("#list").innerHTML=shown.length?shown.map(card).join(""):`<p class="empty">Nothing here.</p>`;
+}
+function card(r,i){
+  const q=(r.quotes||[]).slice(0,2).map(f=>`<blockquote>“${esc(f.quote)}”<small>${SRC[f.source]||f.source}, ${esc(f.date)}</small></blockquote>`).join("");
+  const mk=r.mark?`<div class="marked">Marked: ${esc(MARKS[r.mark.mark]||r.mark.mark)} — “${esc(r.mark.reason)}” (${esc(r.mark.marked_by)})</div>`:"";
+  const flags=(r.all_flags||[]).map(f=>`<li>${esc(f.flag.replace(/_/g," "))}: “${esc(f.quote)}” <i>(${SRC[f.source]||f.source}, ${esc(f.date)})</i></li>`).join("");
+  return `<article class="card">
+  <div class="top"><div><div class="name">${esc(r.merchant)}</div>
+  <div class="meta">${esc(r.city)} · ${esc(r.category)} · band ${esc(r.band)} · ${esc(r.deal_id)} · sold out ${esc(r.sold_out_date)}</div></div>
+  <span class="pill ${r.action}">${r.value_gbp!=null&&r.action==="call"?"~£"+Math.max(r.value_gbp,0).toFixed(0):r.action}</span></div>
+  <div class="head">${esc(r.headline)}</div><p class="why">${esc(r.why)}</p>${q}${mk}
+  <details><summary>How we worked it out</summary><p>${esc(r.maths||"No value estimate needed.")}</p>
+  ${r.ai_verdict?`<p>AI read of the notes: ${esc(r.ai_verdict)}</p>`:""}
+  ${flags?`<p>Everything flagged in the text (${esc(r.flags_backend)}):</p><ul>${flags}</ul>`:`<p>No flags in the last 12 months of text (${esc(r.flags_backend)}).</p>`}</details>
+  <button class="link" data-mark="${i}">${r.mark?"Change mark":"Mark this merchant"}</button>
+  <form class="markbox" id="mb${i}" data-mid="${esc(r.merchant_id)}">
+    <select name="mark">${Object.entries(MARKS).map(([k,v])=>`<option value="${k}">${v}</option>`).join("")}</select>
+    <textarea name="reason" rows="2" placeholder="Why? One sentence, e.g. 'Owner said she's fully booked till March.'" required></textarea>
+    <input name="marked_by" placeholder="Your rep id, e.g. R10" value="${esc(store("rep")||"")}" required>
+    <button class="primary" type="submit">Save mark</button>
+  </form></article>`;
+}
+document.addEventListener("click",e=>{
+  const t=e.target.closest("[data-a]");if(t){tab=t.dataset.a;render();return}
+  const m=e.target.closest("[data-mark]");if(m){$("#mb"+m.dataset.mark).classList.toggle("open")}
+});
+document.addEventListener("submit",async e=>{
+  e.preventDefault();const f=e.target, fd=new FormData(f);
+  const body={merchant_id:f.dataset.mid,mark:fd.get("mark"),reason:fd.get("reason"),marked_by:fd.get("marked_by")};
+  const b=f.querySelector("button");b.disabled=true;b.textContent="Saving…";
+  const r=await fetch("/api/mark",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
+  const j=await r.json();
+  if(!r.ok){b.disabled=false;b.textContent="Save mark";alert(j.error);return}
+  await load();
+});
+$("#rep").addEventListener("change",()=>{store("rep",$("#rep").value);load()});
+load();
+</script>
+</body>
+</html>

@@ -36,6 +36,8 @@ class Decision:
     value_gbp: float | None = None
     maths: str = ""
     quotes: list = field(default_factory=list)
+    rule: str = ""
+    parts: dict = field(default_factory=dict)
 
     def to_dict(self):
         return asdict(self)
@@ -71,7 +73,7 @@ def _strong(flags, *names):
     return sorted(hits, key=lambda f: f["date"], reverse=True)
 
 
-def decide(soldout, merchant, schedules, flags, uplift, mark=None, hourly=None):
+def _decide(soldout, merchant, schedules, flags, uplift, mark=None, hourly=None):
     """soldout: dict with deal_id, merchant_id, sold_out_date (+ callback_promised optional).
     merchant: entry of context.json. flags: verified flags for this merchant (list)."""
     band = merchant["band"]
@@ -130,3 +132,31 @@ def decide(soldout, merchant, schedules, flags, uplift, mark=None, hourly=None):
         return Decision(CALL, f"Call, worth ~£{v:.0f}", "Calls to this merchant connect and pay." + extra,
                         v, maths, _quote(flags, "wants_more"))
     return Decision(SKIP, "Don't bother", f"Worth ~£{v:.2f}: less than the rep's time." + extra, v, maths)
+
+
+RULES = [  # (headline starts with, rule label shown to the rep)
+    ("Don't contact", "Do-not-contact list"),
+    ("Call: callback promised", "Callback promised"),
+    ("Don't call (rep's mark)", "Rep's mark"), ("Call (rep's mark)", "Rep's mark"),
+    ("Don't push a raise (rep's mark)", "Rep's mark"), ("Skip: auto top-up (rep's mark)", "Rep's mark"),
+    ("Skip: tops up by itself", "Auto-replenish running"),
+    ("Skip: merchant says it tops up", "Merchant's own words"),
+    ("Skip: merchant said no", "Merchant's own words"),
+    ("Later: merchant away", "Merchant away"),
+    ("Talk capacity", "Capacity / quality in the text"),
+    ("Send Deal Alert login help", "Deal Alert link trouble"),
+    ("Call, worth", "£ value"), ("Don't bother", "£ value"),
+]
+
+
+def decide(soldout, merchant, schedules, flags, uplift, mark=None, hourly=None):
+    d = _decide(soldout, merchant, schedules, flags, uplift, mark, hourly)
+    d.rule = next((label for start, label in RULES if d.headline.startswith(start)), "")
+    band = merchant["band"]
+    p = money.shrunk_rate(merchant["restock_tasks_connected"], merchant["restock_tasks_worked"],
+                          uplift["bands"][band]["connect_rate"])
+    capacity = bool(_strong(flags, "capacity_limit"))
+    w = money.worth(band, uplift, p, money.refund_risk(merchant["refunds_6m"], merchant["gp_6m"], capacity), hourly)
+    d.parts = {"p_connect": round(w.p_connect, 3), "gp_if_connected": w.gp_if_connected,
+               "refund_risk": round(w.refund_risk, 3), "rep_cost": w.rep_cost, "value": w.value}
+    return d

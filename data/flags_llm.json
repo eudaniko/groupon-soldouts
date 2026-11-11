@@ -1618,5 +1618,26 @@
   "dropped": [],
   "verdict": "Don't call for a restock now: the April spa was full before voucher expiry and a July-era rep note says Femi wanted a cheaper intro price and a 6-week review rather than more volume, while the January rash complaint is a service risk. Revisit at the agreed review point and check the patch-test issue she raised in April first.",
   "backend": "llm"
+ },
+ "M10014": {
+  "flags": [
+   {
+    "flag": "auto_topup",
+    "item_id": "N-012734",
+    "quote": "sells out eevry Tuesday and comes back every Tuesday",
+    "source": "rep_note",
+    "date": "2026-07-16"
+   },
+   {
+    "flag": "no_restock_wanted",
+    "item_id": "N-012734",
+    "quote": "Didn't need me.",
+    "source": "rep_note",
+    "date": "2026-07-16"
+   }
+  ],
+  "dropped": [],
+  "verdict": "Don't call: the cap refreshes itself every Tuesday and the merchant said they didn't need a restock call, so no action is needed.",
+  "backend": "llm"
  }
 }

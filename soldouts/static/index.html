@@ -54,6 +54,15 @@ form.mark.open{display:flex}
 .opts input{display:none}.opts label:has(input:checked){border-color:var(--ink);background:var(--chip);font-weight:600}
 textarea,input[type=text]{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:9px}
 .primary{background:var(--ink);color:var(--bg);border:0;border-radius:10px;padding:11px;font-weight:650;cursor:pointer}
+.rank{flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:13px;background:var(--a);color:var(--card)}
+.score{margin-top:10px}
+.score .track{height:8px;border-radius:4px;background:var(--chip);overflow:hidden}
+.score .fill{height:100%;border-radius:4px;background:var(--a)}
+.eq{display:flex;flex-wrap:wrap;align-items:center;gap:4px;margin-top:8px;font-size:12px;color:var(--mute)}
+.eq span{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:3px 7px;color:var(--ink);font-variant-numeric:tabular-nums}
+.eq span small{color:var(--mute);margin-left:3px}
+.eq .res{background:var(--ab);border-color:transparent;color:var(--a);font-weight:800}
+.rule{display:inline-flex;align-items:center;gap:6px;margin-top:8px;font-size:12px;color:var(--a);background:var(--ab);border-radius:999px;padding:3px 10px;font-weight:650}
 .empty{color:var(--mute);text-align:center;padding:40px 0}
 .note{font-size:12px;color:var(--mute);margin:4px 0 12px}
 .note b{color:var(--later);background:var(--later-bg);font-size:10.5px;padding:1px 6px;border-radius:999px;letter-spacing:.04em;text-transform:uppercase}
@@ -122,19 +131,26 @@ function render(){
   $("#seg").innerHTML=TABS.map(([a,l])=>`<button role="tab" data-tab="${a}" aria-pressed="${a===tab}">${l}<span>${n(a)}</span></button>`).join("");
   $("#note").innerHTML=`Rep time £<input id="rate" type="number" inputmode="decimal" min="0" max="500" value="${esc(board.hourly_rate)}">/h <b>assumption</b> · not an agreed figure, change it to see calls re-rank · ${esc(board.source)}`;
   const shown=rs.filter(x=>x.action===tab);
-  $("#list").innerHTML=shown.length?shown.map(card).join(""):`<p class="empty">Nothing in this list.</p>`;
+  const max=Math.max(1,...shown.map(x=>Math.max(x.value_gbp||0,0)));
+  $("#list").innerHTML=shown.length?shown.map((x,i)=>card(x,i,max)).join(""):`<p class="empty">Nothing in this list.</p>`;
 }
-function card(r){
+function eq(p){
+  if(!p||p.value==null)return"";
+  return `<div class="eq"><span>${Math.round(p.p_connect*100)}%<small>pick up</small></span>×<span>£${p.gp_if_connected.toFixed(2)}<small>profit</small></span>×<span>${Math.round((1-p.refund_risk)*100)}%<small>kept</small></span>−<span>£${p.rep_cost.toFixed(0)}<small>time</small></span>=<span class="res">£${p.value.toFixed(2)}</span></div>`;
+}
+function card(r,i,max){
   const k=r.merchant_id+r.deal_id;
   const gbp=r.action==="call"&&r.value_gbp!=null?`<span class="gbp">£${Math.max(r.value_gbp,0).toFixed(0)}</span>`:"";
   const q=(r.quotes||[]).slice(0,1).map(f=>`<blockquote>“${esc(f.quote)}”<small>${SRC[f.source]||f.source} · ${esc(f.date)}</small></blockquote>`).join("");
   const mk=r.mark?`<div class="marked">Marked by ${esc(r.mark.marked_by)}: ${esc(MARKS[r.mark.mark]||r.mark.mark)} — “${esc(r.mark.reason)}”</div>`:"";
   const fl=(r.all_flags||[]).map(f=>`<li><b>${esc(f.flag.replace(/_/g," "))}</b>: “${esc(f.quote)}” <i>(${SRC[f.source]||f.source}, ${esc(f.date)})</i></li>`).join("");
   return `<article class="card ${r.action}" data-k="${esc(k)}">
-  <div class="act"><h2>${esc(r.headline.replace(/, worth ~£\d+/,""))}</h2>${gbp}</div>
+  <div class="act">${r.action==="call"?`<span class="rank">#${i+1}</span>`:""}<h2 style="flex:1">${esc(r.headline.replace(/, worth ~£\d+/,""))}</h2>${gbp}</div>
   <div class="m">${esc(r.merchant)}</div>
   <div class="meta">${esc(r.city)} · ${esc(r.category)} · size ${esc(r.band)} · ${esc(r.deal_id)}${board.reps.length&&!rep?" · "+esc(r.rep_id):""}</div>
   <p class="why">${esc(r.why)}</p>${q}${mk}
+  ${r.rule==="£ value"||r.action==="call"?`<div class="score">${r.action==="call"?`<div class="track"><div class="fill" style="width:${Math.max(4,Math.round(Math.max(r.value_gbp||0,0)/max*100))}%"></div></div>`:""}${eq(r.parts)}</div>`:""}
+  ${r.rule&&r.rule!=="£ value"?`<span class="rule">Decided by: ${esc(r.rule)}</span>`:""}
   <div class="more ${open[k]==="more"?"open":""}"><div>${esc(r.maths||"No £ estimate needed.")}</div>
    ${r.ai_verdict?`<p>AI read of the notes: ${esc(r.ai_verdict)}</p>`:""}
    ${fl?`<ul>${fl}</ul>`:`<p>No flags in the last 12 months of text.</p>`}</div>

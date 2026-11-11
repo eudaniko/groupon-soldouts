@@ -56,6 +56,21 @@ class SuppressionListTest(unittest.TestCase):
         self.assertEqual(held, ["D1-1"])
 
 
+class DidTest(unittest.TestCase):
+    def test_removes_a_gap_that_was_there_before(self):
+        # holdout always 5 points better, before and after: no effect
+        t_pre, h_pre = [0.0] * 30 + [1.0] * 70, [0.0] * 25 + [1.0] * 75
+        est, lo, hi = measure._did_ci(t_pre, h_pre, t_pre, h_pre)
+        self.assertEqual(est, 0)
+
+    def test_finds_a_real_drop(self):
+        t_pre, h_pre = [0.0] * 30 + [1.0] * 70, [0.0] * 30 + [1.0] * 70
+        t_post = [0.0] * 60 + [1.0] * 40
+        est, lo, hi = measure._did_ci(t_post, h_pre, t_pre, h_pre)
+        self.assertAlmostEqual(est, -0.30)
+        self.assertLess(hi, 0)
+
+
 class MeasureTest(unittest.TestCase):
     def test_diff_ci_brackets_zero_for_same_data(self):
         xs = [float(i % 7) for i in range(200)]

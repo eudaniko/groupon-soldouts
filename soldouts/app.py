@@ -10,6 +10,7 @@ routing/input/todays_soldouts.csv and the page says "demo data". Marks go to the
 import base64
 import csv
 import json
+import math
 import os
 import sys
 import threading
@@ -147,6 +148,17 @@ class State:
         return {**entry, "synced_to_sandbox": synced}
 
 
+def parse_rate(text):
+    """The page's ?rate= (rep cost, £ per hour). A number from 0 to 500; anything else means the default."""
+    try:
+        rate = float(text)
+    except (TypeError, ValueError):
+        return None
+    if not math.isfinite(rate):
+        return None
+    return min(max(rate, 0.0), 500.0)
+
+
 STATE = None
 
 
@@ -188,12 +200,7 @@ class Handler(BaseHTTPRequestHandler):
         if path == "/":
             return self._send(200, (STATIC / "index.html").read_bytes(), "text/html; charset=utf-8")
         if path == "/api/board":
-            try:
-                rate = float(params["rate"]) if params.get("rate") else None
-                rate = None if rate is None else min(max(rate, 0.0), 500.0)
-            except ValueError:
-                rate = None
-            return self._send(200, STATE.board(params.get("rep") or None, rate))
+            return self._send(200, STATE.board(params.get("rep") or None, parse_rate(params.get("rate"))))
         if path == "/api/marks":
             return self._send(200, STATE.marks())
         if path == "/healthz":

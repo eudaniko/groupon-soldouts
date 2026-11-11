@@ -38,6 +38,9 @@ summary{cursor:pointer}
 button.link{background:none;border:0;color:var(--other);padding:0;margin-top:8px;cursor:pointer;font-size:14px}
 button.primary{background:var(--ink);color:var(--bg);border:0;border-radius:8px;padding:9px}
 .marked{margin-top:8px;font-size:13px;background:var(--other-bg);color:var(--other);padding:6px 8px;border-radius:8px}
+.assume{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:8px;font-size:13px}
+.assume input{width:62px;padding:4px 6px;margin:0 2px}
+.tag{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--later);background:var(--later-bg);padding:2px 7px;border-radius:999px}
 .empty{color:var(--mute);text-align:center;padding:30px 0}
 </style>
 </head>
@@ -45,6 +48,8 @@ button.primary{background:var(--ink);color:var(--bg);border:0;border-radius:8px;
 <header>
   <h1>Sold-outs today</h1>
   <div class="row"><select id="rep" aria-label="Rep"><option value="">All reps</option></select></div>
+  <div class="assume"><label for="rate">Rep time <b>£<input id="rate" type="number" min="0" max="500" step="1" inputmode="decimal">/hour</b></label>
+  <span class="tag">assumption</span><span class="meta" id="rateNote"></span></div>
   <div class="tabs" id="tabs"></div>
 </header>
 <main>
@@ -60,9 +65,12 @@ const $=s=>document.querySelector(s);
 const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 function store(k,v){try{v===undefined?0:localStorage.setItem(k,v);return localStorage.getItem(k)}catch(e){return null}}
 async function load(){
-  const rep=$("#rep").value;
-  const r=await fetch("/api/board"+(rep?"?rep="+encodeURIComponent(rep):""));
+  const rep=$("#rep").value, rate=$("#rate").value;
+  const qs=new URLSearchParams();if(rep)qs.set("rep",rep);if(rate)qs.set("rate",rate);
+  const r=await fetch("/api/board"+(qs.toString()?"?"+qs:""));
   board=await r.json();
+  if(!$("#rate").value)$("#rate").value=board.hourly_rate;
+  $("#rateNote").textContent=board.hourly_rate===board.hourly_rate_default?`not an agreed figure; change it to see the calls re-rank`:`default is £${board.hourly_rate_default}/h; your change only affects this screen`;
   if($("#rep").options.length===1){for(const p of board.reps){const o=document.createElement("option");o.value=p.rep_id;o.textContent=`${p.rep_id} · ${p.rep_name}${p.team?" · "+p.team:""}`;$("#rep").append(o)}
     const saved=store("rep");if(saved&&!rep){$("#rep").value=saved;return load()}}
   render();
@@ -71,7 +79,7 @@ function render(){
   const rows=board.rows, n=a=>a==="all"?rows.length:rows.filter(r=>r.action===a).length;
   $("#tabs").innerHTML=ACTIONS.map(([a,l])=>`<button class="tab" aria-pressed="${a===tab}" data-a="${a}">${l} ${n(a)}</button>`).join("");
   const worth=rows.filter(r=>r.action==="call").reduce((s,r)=>s+Math.max(r.value_gbp||0,0),0);
-  $("#src").textContent=`${board.source} · ${rows.length} sold-outs · calls worth ~£${worth.toFixed(0)} · rep time at £${board.hourly_rate}/h`;
+  $("#src").textContent=`${board.source} · ${rows.length} sold-outs · calls worth ~£${worth.toFixed(0)} · rep time £${board.hourly_rate}/h (assumption)`;
   const shown=tab==="all"?rows:rows.filter(r=>r.action===tab);
   $("#list").innerHTML=shown.length?shown.map(card).join(""):`<p class="empty">Nothing here.</p>`;
 }
@@ -109,6 +117,7 @@ document.addEventListener("submit",async e=>{
   await load();
 });
 $("#rep").addEventListener("change",()=>{store("rep",$("#rep").value);load()});
+let rt;$("#rate").addEventListener("input",()=>{clearTimeout(rt);rt=setTimeout(load,400)});
 load();
 </script>
 </body>

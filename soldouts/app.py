@@ -76,7 +76,7 @@ class State:
             remote = {}
         return {**local, **remote}
 
-    def board(self, rep=None):
+    def board(self, rep=None, hourly=None):
         rows, source = self.soldouts()
         marks = self.marks()
         out = []
@@ -89,7 +89,7 @@ class State:
                   "sold_out_date": (r.get("sold_out_date") or r.get("sold_out_at") or date.today().isoformat())[:10],
                   "callback_promised": r.get("callback_promised", "0")}
             f = self.flags_for(mid, so["sold_out_date"])
-            d = decide.decide(so, m, self.ctx["schedules"], f.get("flags", []), self.uplift, marks.get(mid))
+            d = decide.decide(so, m, self.ctx["schedules"], f.get("flags", []), self.uplift, marks.get(mid), hourly)
             out.append({**d.to_dict(), "merchant_id": mid, "merchant": m["name"], "city": m["city"],
                         "category": m["category"], "band": m["band"], "rep_id": m["rep_id"], "deal_id": r["deal_id"],
                         "sold_out_date": so["sold_out_date"], "cap": r.get("cap"), "mark": marks.get(mid),
@@ -97,7 +97,8 @@ class State:
                         "all_flags": f.get("flags", [])})
         order = {decide.CALL: 0, decide.OTHER: 1, decide.LATER: 2, decide.SKIP: 3}
         out.sort(key=lambda x: (order[x["action"]], "callback" not in x["headline"], -(x["value_gbp"] or 0)))
-        return {"source": source, "rows": out, "hourly_rate": config.REP_HOURLY_COST_GBP,
+        return {"source": source, "rows": out, "hourly_rate": config.REP_HOURLY_COST_GBP if hourly is None else hourly,
+                "hourly_rate_default": config.REP_HOURLY_COST_GBP,
                 "reps": sorted(self.reps.values(), key=lambda r: r["rep_id"])}
 
     def set_mark(self, body):
@@ -162,7 +163,12 @@ class Handler(BaseHTTPRequestHandler):
         if path == "/":
             return self._send(200, (STATIC / "index.html").read_bytes(), "text/html; charset=utf-8")
         if path == "/api/board":
-            return self._send(200, STATE.board(params.get("rep") or None))
+            try:
+                rate = float(params["rate"]) if params.get("rate") else None
+                rate = None if rate is None else min(max(rate, 0.0), 500.0)
+            except ValueError:
+                rate = None
+            return self._send(200, STATE.board(params.get("rep") or None, rate))
         if path == "/api/marks":
             return self._send(200, STATE.marks())
         if path == "/healthz":

@@ -9,8 +9,15 @@ Two backends, same output:
 Every flag carries a quote, and the quote is checked in code: it must appear word for word in
 the item it cites. A flag whose quote can't be found is dropped (the LLM made it up or paraphrased).
 
+Offline, from a file (no network, no key):
+
+    python3 -m soldouts.detect --items tests/fixtures/sample_items.json                   # rules
+    python3 -m soldouts.detect --items tests/fixtures/sample_items.json --backend replay  # recorded LLM answers, quotes re-checked
+
+With the data pack in data/pack (and SANDBOX_KEY for llm):
+
     python3 -m soldouts.detect --backend rules --pack data/pack --merchants M10001,M10002
-    python3 -m soldouts.detect --backend llm --merchants-from-today --out data/flags_llm.json
+    python3 -m soldouts.detect --backend llm --merchants M10001 --out data/flags_llm.json --merge
 """
 import argparse
 import json
@@ -185,10 +192,17 @@ def detect(items_by_merchant, backend="rules", today=None, **kw):
     today = today or date.today().isoformat()
     out = {}
     for mid, items in items_by_merchant.items():
-        items = recent(items, today)
-        if backend == "llm":
+        if backend == "replay":
+            # Recorded LLM answers (data/flags_llm.json), every quote checked again against the text given.
+            rec = kw["recorded"].get(mid)
+            if rec is None:
+                continue
+            raw, verdict = rec.get("flags", []) + rec.get("dropped", []), rec.get("verdict", "")
+        elif backend == "llm":
+            items = recent(items, today)
             raw, verdict = llm_backend(items, **kw)
         else:
+            items = recent(items, today)
             raw, verdict = rules_backend(items), ""
         kept, dropped = verify(raw, items)
         out[mid] = {"flags": kept, "dropped": dropped, "verdict": verdict, "backend": backend}
@@ -204,8 +218,12 @@ def group(items):
 
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("--backend", choices=["rules", "llm"], default="rules")
+    ap.add_argument("--backend", choices=["rules", "llm", "replay"], default="rules",
+                    help="rules: offline regexes. llm: live, needs SANDBOX_KEY. replay: the recorded LLM answers "
+                         "(--recorded), quotes re-checked offline")
+    ap.add_argument("--items", help="JSON file with a list of text items (source, id, merchant_id, date, text); instead of --pack")
     ap.add_argument("--pack", default=str(config.PACK), help="folder with rep_notes.csv, deal_alert_replies.csv, reviews.csv, refunds.csv")
+    ap.add_argument("--recorded", default=str(config.DATA / "flags_llm.json"), help="recorded LLM answers, for --backend replay")
     ap.add_argument("--merchants", help="comma-separated merchant ids (default: all with text)")
     ap.add_argument("--today", default=date.today().isoformat(), help="YYYY-MM-DD; text older than a year is ignored")
     ap.add_argument("--model", default="claude-haiku-5-5")
@@ -213,8 +231,17 @@ def main(argv=None):
     ap.add_argument("--merge", action="store_true", help="merge into an existing --out file instead of replacing it")
     a = ap.parse_args(argv)
     ids = set(a.merchants.split(",")) if a.merchants else None
-    items = group(texts.load(a.pack, ids))
+    if a.items:
+        loaded = [i for i in json.load(open(a.items, encoding="utf-8")) if not ids or i["merchant_id"] in ids]
+    elif os.path.isdir(a.pack):
+        loaded = texts.load(a.pack, ids)
+    else:
+        sys.exit(f"No text to read: {a.pack} isn't there. Unzip the data pack into it, "
+                 "or run from the sample file: --items tests/fixtures/sample_items.json")
+    items = group(loaded)
     kw = {"model": a.model} if a.backend == "llm" else {}
+    if a.backend == "replay":
+        kw = {"recorded": json.load(open(a.recorded, encoding="utf-8"))}
     existing = {}
     if a.out and a.merge and os.path.exists(a.out):
         existing = json.load(open(a.out))

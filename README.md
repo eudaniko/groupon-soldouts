@@ -18,11 +18,20 @@ python3 -m unittest discover -s tests      # tool tests
 
 With the sandbox: put `SANDBOX_KEY=...` in `.env` (git-ignored). The tool then reads `GET /soldouts/today` and writes marks with `PUT /merchants/{id}/mark`. Without it, it uses `routing/input/todays_soldouts.csv` and says "demo data" at the top.
 
+The AI detector, offline from a file (no network, no key):
+
+```bash
+python3 -m soldouts.detect --items tests/fixtures/sample_items.json                   # rules backend
+python3 -m soldouts.detect --items tests/fixtures/sample_items.json --backend replay  # recorded LLM answers, quotes re-checked
+```
+
+`sample_items.json` is the cleaned text for 5 merchants from the data pack. `replay` takes the LLM's recorded answers (`data/flags_llm.json`, 73 merchants) and runs the same quote check on them, so you can see what the model said and that every quote is really in the text.
+
 Other commands:
 
 ```bash
-python3 -m soldouts.detect --backend rules --pack data/pack --merchants M10001   # text flags, offline
-python3 -m soldouts.detect --backend llm --merchants M10001 --out data/flags_llm.json --merge   # needs key
+python3 -m soldouts.detect --backend rules --pack data/pack --merchants M10001   # text flags from the pack, offline
+python3 -m soldouts.detect --backend llm --merchants M10001 --out data/flags_llm.json --merge   # live, needs key
 python3 -m soldouts.measure volume                        # what the actual list removes (last 12 weeks)
 python3 -m soldouts.measure estimate                      # the range, from history
 python3 -m soldouts.measure readout --start 2026-11-15    # the real number, after launch
@@ -95,7 +104,7 @@ The £340k multiplies £11 by every task, but 28% are already called, the ones l
 
 - **In the product:** `soldouts/detect.py` sends one merchant's last 12 months of text (rep notes, Deal Alert replies, reviews, refund reasons; newest 60 items, cleaned: duplicates from the CRM replay removed, Windows-1252 mojibake fixed) to `claude-haiku-5-5` through the sandbox gateway, with a fixed JSON schema and thinking off. It must cite an item id and quote it word for word. **Code checks every quote against the cited item and drops it if it isn't there.** Cut-off answers (`stop_reason` not `end_turn`) are rejected, not parsed. Results are cached in `data/flags_llm.json`; the hosted tool reads new merchants in the background as they sell out, and shows the rules flags until then. Spend so far: about $0.02 of the $20 (about $0.0003 per merchant).
 - **The AI never does the sums or makes the decision.** It produces flags + quotes; `decide.py` applies fixed rules.
-- **Offline:** the rules backend (regular expressions, same output shape) runs with no network and no key, which is what the tests and an offline run use.
+- **Offline:** the rules backend (regular expressions, same output shape) runs with no network and no key. The LLM's answers are recorded in `data/flags_llm.json`; `--backend replay` re-checks them against the text with no network. The tests use both, plus a fake LLM for the failure cases (made-up quote, cut-off answer).
 - **Checked against people:** see "Checked against a rep" below.
 - **To build it:** I used Claude (chat + code) for analysis, code and drafts. Session export is in the submission.
 

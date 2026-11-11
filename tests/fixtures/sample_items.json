@@ -1,0 +1,1083 @@
+[
+ {
+  "source": "refund_reason",
+  "id": "RF-003146",
+  "merchant_id": "M10001",
+  "date": "2026-05-05",
+  "text": "merchant fully booked, cust refunded",
+  "truncated": false,
+  "amount_gbp": 59.0
+ },
+ {
+  "source": "refund_reason",
+  "id": "RF-003153",
+  "merchant_id": "M10001",
+  "date": "2026-05-05",
+  "text": "no appointment before voucher expiry",
+  "truncated": false,
+  "amount_gbp": 49.0
+ },
+ {
+  "source": "rep_note",
+  "id": "N-011331",
+  "merchant_id": "M10001",
+  "date": "2026-05-06",
+  "text": "spoke to T. stays at 60 from now on",
+  "truncated": false
+ },
+ {
+  "source": "refund_reason",
+  "id": "RF-003163",
+  "merchant_id": "M10001",
+  "date": "2026-05-06",
+  "text": "no slots. refunded as goodwill",
+  "truncated": false,
+  "amount_gbp": 59.0
+ },
+ {
+  "source": "review",
+  "id": "RV-006897",
+  "merchant_id": "M10001",
+  "date": "2026-05-06",
+  "text": "Five stars from me. The facial was exactly what the doctor ordered.",
+  "truncated": false,
+  "rating": 5
+ },
+ {
+  "source": "refund_reason",
+  "id": "RF-003170",
+  "merchant_id": "M10001",
+  "date": "2026-05-07",
+  "text": "Waited too long for appointment, asked for refund",
+  "truncated": false,
+  "amount_gbp": 59.0
+ },
+ {
+  "source": "refund_reason",
+  "id": "RF-003179",
+  "merchant_id": "M10001",
+  "date": "2026-05-08",
+  "text": "Waited too long for appointment, asked for refund",
+  "truncated": false,
+  "amount_gbp": 59.0
+ },
+ {
+  "source": "refund_reason",
+  "id": "RF-003184",
+  "merchant_id": "M10001",
+  "date": "2026-05-08",
+  "text": "Waited too long for appointment, asked for refund",
+  "truncated": false,
+  "amount_gbp": 59.0
+ },
+ {
+  "source": "refund_reason",
+  "id": "RF-003189",
+  "merchant_id": "M10001",
+  "date": "2026-05-09",
+  "text": "no availability, customer wants money back",
+  "truncated": false,
+  "amount_gbp": 59.0
+ },
+ {
+  "source": "review",
+  "id": "RV-006949",
+  "merchant_id": "M10001",
+  "date": "2026-05-09",
+  "text": "left feeling like jelly in the best way, will be back",
+  "truncated": false,
+  "rating": 4
+ },
+ {
+  "source": "refund_reason",
+  "id": "RF-003197",
+  "merchant_id": "M10001",
+  "date": "2026-05-11",
+  "text": "cust couldn't get booked in before expiry",
+  "truncated": false,
+  "amount_gbp": 59.0
+ },
+ {
+  "source": "refund_reason",
+  "id": "RF-003199",
+  "merchant_id": "M10001",
+  "date": "2026-05-11",
+  "text": "cust couldn't get booked in before expiry",
+  "truncated": false,
+  "amount_gbp": 59.0
+ },
+ {
+  "source": "refund_reason",
+  "id": "RF-003200",
+  "merchant_id": "M10001",
+  "date": "2026-05-11",
+  "text": "no availability, customer wants money back",
+  "truncated": false,
+  "amount_gbp": 59.0
+ },
+ {
+  "source": "review",
+  "id": "RV-006985",
+  "merchant_id": "M10001",
+  "date": "2026-05-11",
+  "text": "Second visit now and it's every bit as good as the first. Holly even remembered what I'd said about my neck last time.",
+  "truncated": false,
+  "rating": 4
+ },
+ {
+  "source": "refund_reason",
+  "id": "RF-003206",
+  "merchant_id": "M10001",
+  "date": "2026-05-12",
+  "text": "merchant fully booked, cust refunded",
+  "truncated": false,
+  "amount_gbp": 59.0
+ },
+ {
+  "source": "refund_reason",
+  "id": "RF-003221",
+  "merchant_id": "M10001",
+  "date": "2026-05-14",
+  "text": "no availability, customer wants money back",
+  "truncated": false,
+  "amount_gbp": 59.0
+ },
+ {
+  "source": "review",
+  "id": "RV-007044",
+  "merchant_id": "M10001",
+  "date": "2026-05-14",
+  "text": "Lovely place but the wait for my facial was a bit much.",
+  "truncated": false,
+  "rating": 3
+ },
+ {
+  "source": "refund_reason",
+  "id": "RF-003250",
+  "merchant_id": "M10001",
+  "date": "2026-05-17",
+  "text": "no slots. refunded as goodwill",
+  "truncated": false,
+  "amount_gbp": 59.0
+ },
+ {
+  "source": "review",
+  "id": "RV-007097",
+  "merchant_id": "M10001",
+  "date": "2026-05-17",
+  "text": "Had to book weeks out, voucher nearly expired. Treatment itself was fine.",
+  "truncated": false,
+  "rating": 2
+ },
+ {
+  "source": "refund_reason",
+  "id": "RF-003256",
+  "merchant_id": "M10001",
+  "date": "2026-05-18",
+  "text": "no appointment before voucher expiry",
+  "truncated": false,
+  "amount_gbp": 59.0
+ },
+ {
+  "source": "refund_reason",
+  "id": "RF-003274",
+  "merchant_id": "M10001",
+  "date": "2026-05-20",
+  "text": "no availability, customer wants money back",
+  "truncated": false,
+  "amount_gbp": 49.0
+ },
+ {
+  "source": "refund_reason",
+  "id": "RF-003275",
+  "merchant_id": "M10001",
+  "date": "2026-05-20",
+  "text": "no slots. refunded as goodwill",
+  "truncated": false,
+  "amount_gbp": 49.0
+ },
+ {
+  "source": "refund_reason",
+  "id": "RF-003279",
+  "merchant_id": "M10001",
+  "date": "2026-05-20",
+  "text": "merchant fully booked, cust refunded",
+  "truncated": false,
+  "amount_gbp": 59.0
+ },
+ {
+  "source": "review",
+  "id": "RV-007155",
+  "merchant_id": "M10001",
+  "date": "2026-05-20",
+  "text": "Couldn't get a slot for over a month. Rang three times. Not impressed.",
+  "truncated": false,
+  "rating": 3
+ },
+ {
+  "source": "refund_reason",
+  "id": "RF-003313",
+  "merchant_id": "M10001",
+  "date": "2026-05-24",
+  "text": "no availability, customer wants money back",
+  "truncated": false,
+  "amount_gbp": 59.0
+ },
+ {
+  "source": "refund_reason",
+  "id": "RF-003318",
+  "merchant_id": "M10001",
+  "date": "2026-05-24",
+  "text": "no availability, customer wants money back",
+  "truncated": false,
+  "amount_gbp": 49.0
+ },
+ {
+  "source": "refund_reason",
+  "id": "RF-003330",
+  "merchant_id": "M10001",
+  "date": "2026-05-25",
+  "text": "no appointment before voucher expiry",
+  "truncated": false,
+  "amount_gbp": 59.0
+ },
+ {
+  "source": "refund_reason",
+  "id": "RF-003332",
+  "merchant_id": "M10001",
+  "date": "2026-05-25",
+  "text": "no appointment before voucher expiry",
+  "truncated": false,
+  "amount_gbp": 59.0
+ },
+ {
+  "source": "refund_reason",
+  "id": "RF-003333",
+  "merchant_id": "M10001",
+  "date": "2026-05-25",
+  "text": "no appointment before voucher expiry",
+  "truncated": false,
+  "amount_gbp": 59.0
+ },
+ {
+  "source": "refund_reason",
+  "id": "RF-003336",
+  "merchant_id": "M10001",
+  "date": "2026-05-25",
+  "text": "merchant fully booked, cust refunded",
+  "truncated": false,
+  "amount_gbp": 59.0
+ },
+ {
+  "source": "refund_reason",
+  "id": "RF-003344",
+  "merchant_id": "M10001",
+  "date": "2026-05-26",
+  "text": "no slots. refunded as goodwill",
+  "truncated": false,
+  "amount_gbp": 49.0
+ },
+ {
+  "source": "refund_reason",
+  "id": "RF-003347",
+  "merchant_id": "M10001",
+  "date": "2026-05-26",
+  "text": "merchant fully booked, cust refunded",
+  "truncated": false,
+  "amount_gbp": 59.0
+ },
+ {
+  "source": "refund_reason",
+  "id": "RF-003354",
+  "merchant_id": "M10001",
+  "date": "2026-05-27",
+  "text": "merchant fully booked, cust refunded",
+  "truncated": false,
+  "amount_gbp": 59.0
+ },
+ {
+  "source": "refund_reason",
+  "id": "RF-003355",
+  "merchant_id": "M10001",
+  "date": "2026-05-28",
+  "text": "cust couldn't get booked in before expiry",
+  "truncated": false,
+  "amount_gbp": 59.0
+ },
+ {
+  "source": "alert_reply",
+  "id": "DAR-001999",
+  "merchant_id": "M10001",
+  "date": "2026-06-01",
+  "text": "We've got auto top-up set to 90 so I don't know why I'm being told it's sold out, but either way please stop the emails.",
+  "truncated": false
+ },
+ {
+  "source": "refund_reason",
+  "id": "RF-003380",
+  "merchant_id": "M10001",
+  "date": "2026-06-03",
+  "text": "Waited too long for appointment, asked for refund",
+  "truncated": false,
+  "amount_gbp": 59.0
+ },
+ {
+  "source": "refund_reason",
+  "id": "RF-003422",
+  "merchant_id": "M10001",
+  "date": "2026-06-08",
+  "text": "no appointment before voucher expiry",
+  "truncated": false,
+  "amount_gbp": 59.0
+ },
+ {
+  "source": "refund_reason",
+  "id": "RF-003465",
+  "merchant_id": "M10001",
+  "date": "2026-06-12",
+  "text": "no availability, customer wants money back",
+  "truncated": false,
+  "amount_gbp": 59.0
+ },
+ {
+  "source": "refund_reason",
+  "id": "RF-003474",
+  "merchant_id": "M10001",
+  "date": "2026-06-13",
+  "text": "no availability, customer wants money back",
+  "truncated": false,
+  "amount_gbp": 59.0
+ },
+ {
+  "source": "refund_reason",
+  "id": "RF-003475",
+  "merchant_id": "M10001",
+  "date": "2026-06-13",
+  "text": "Waited too long for appointment, asked for refund",
+  "truncated": false,
+  "amount_gbp": 59.0
+ },
+ {
+  "source": "refund_reason",
+  "id": "RF-003481",
+  "merchant_id": "M10001",
+  "date": "2026-06-14",
+  "text": "merchant fully booked, cust refunded",
+  "truncated": false,
+  "amount_gbp": 59.0
+ },
+ {
+  "source": "refund_reason",
+  "id": "RF-003507",
+  "merchant_id": "M10001",
+  "date": "2026-06-17",
+  "text": "cust couldn't get booked in before expiry",
+  "truncated": false,
+  "amount_gbp": 59.0
+ },
+ {
+  "source": "refund_reason",
+  "id": "RF-003514",
+  "merchant_id": "M10001",
+  "date": "2026-06-18",
+  "text": "merchant fully booked, cust refunded",
+  "truncated": false,
+  "amount_gbp": 49.0
+ },
+ {
+  "source": "alert_reply",
+  "id": "DAR-002114",
+  "merchant_id": "M10001",
+  "date": "2026-06-21",
+  "text": "Full. Not raising it. Thanks.",
+  "truncated": false
+ },
+ {
+  "source": "rep_note",
+  "id": "N-012302",
+  "merchant_id": "M10001",
+  "date": "2026-06-22",
+  "text": "sold out. T: 'i know, leave it'. leaving it",
+  "truncated": false
+ },
+ {
+  "source": "refund_reason",
+  "id": "RF-003560",
+  "merchant_id": "M10001",
+  "date": "2026-06-22",
+  "text": "no availability, customer wants money back",
+  "truncated": false,
+  "amount_gbp": 59.0
+ },
+ {
+  "source": "refund_reason",
+  "id": "RF-003606",
+  "merchant_id": "M10001",
+  "date": "2026-06-28",
+  "text": "no slots. refunded as goodwill",
+  "truncated": false,
+  "amount_gbp": 59.0
+ },
+ {
+  "source": "review",
+  "id": "RV-007962",
+  "merchant_id": "M10001",
+  "date": "2026-07-02",
+  "text": "easy to book, friendly welcome, lovely facial",
+  "truncated": false,
+  "rating": 5
+ },
+ {
+  "source": "refund_reason",
+  "id": "RF-003681",
+  "merchant_id": "M10001",
+  "date": "2026-07-09",
+  "text": "Said they were 'closed due to unforseen circumstances'. Fine, but I'm not hanging about for a new date. Refund.",
+  "truncated": false,
+  "amount_gbp": 29.0
+ },
+ {
+  "source": "review",
+  "id": "RV-008240",
+  "merchant_id": "M10001",
+  "date": "2026-07-17",
+  "text": "Ta to the team for a belting facial. Brew on arrival, no rush at the end, and I'd go again tomorrow if my purse allowed.",
+  "truncated": false,
+  "rating": 5
+ },
+ {
+  "source": "alert_reply",
+  "id": "DAR-002266",
+  "merchant_id": "M10001",
+  "date": "2026-07-21",
+  "text": "I know. Leave it please. Tasha",
+  "truncated": false
+ },
+ {
+  "source": "review",
+  "id": "RV-008509",
+  "merchant_id": "M10001",
+  "date": "2026-08-01",
+  "text": "Had the facial as a birthday present to msyelf and it didn't disappoint. Relaxed, unhurried, and my skin feels amazing days later.",
+  "truncated": false,
+  "rating": 4
+ },
+ {
+  "source": "review",
+  "id": "RV-008772",
+  "merchant_id": "M10001",
+  "date": "2026-08-16",
+  "text": "wow just wow. felt amazing after",
+  "truncated": false,
+  "rating": 5
+ },
+ {
+  "source": "rep_note",
+  "id": "N-013412",
+  "merchant_id": "M10001",
+  "date": "2026-08-19",
+  "text": "full. leave.",
+  "truncated": false
+ },
+ {
+  "source": "review",
+  "id": "RV-009046",
+  "merchant_id": "M10001",
+  "date": "2026-08-31",
+  "text": "Valleys girl here, travelled forty minutes and worth every mile. The facial was spot on.",
+  "truncated": false,
+  "rating": 5
+ },
+ {
+  "source": "review",
+  "id": "RV-009325",
+  "merchant_id": "M10001",
+  "date": "2026-09-15",
+  "text": "My first proper pamper since having the baby and it was heaven. An hour of quiet, a lovely facial, and I went home feeling like a human being again.",
+  "truncated": false,
+  "rating": 4
+ },
+ {
+  "source": "alert_reply",
+  "id": "DAR-002621",
+  "merchant_id": "M10001",
+  "date": "2026-09-23",
+  "text": "I know - leave it. T",
+  "truncated": false
+ },
+ {
+  "source": "review",
+  "id": "RV-009593",
+  "merchant_id": "M10001",
+  "date": "2026-09-30",
+  "text": "Not cheap normally, so the voucher was the perfect excuse. Holly took real care and the faical was spot on.",
+  "truncated": false,
+  "rating": 5
+ },
+ {
+  "source": "review",
+  "id": "RV-009872",
+  "merchant_id": "M10001",
+  "date": "2026-10-15",
+  "text": "ahh bliss",
+  "truncated": false,
+  "rating": 5
+ },
+ {
+  "source": "rep_note",
+  "id": "N-014635",
+  "merchant_id": "M10001",
+  "date": "2026-10-20",
+  "text": "same. leave",
+  "truncated": false
+ },
+ {
+  "source": "rep_note",
+  "id": "N-008033",
+  "merchant_id": "M10003",
+  "date": "2025-11-14",
+  "text": "Jas - 2nd site doing well. sold out fri, back mon as usual",
+  "truncated": false
+ },
+ {
+  "source": "refund_reason",
+  "id": "RF-001505",
+  "merchant_id": "M10003",
+  "date": "2025-11-15",
+  "text": "Cardiff move, customer asked politely for refund",
+  "truncated": false,
+  "amount_gbp": 79.0
+ },
+ {
+  "source": "review",
+  "id": "RV-003789",
+  "merchant_id": "M10003",
+  "date": "2025-11-26",
+  "text": "Never had a facail before at 62 and now I wonder why I waited! Skin feels like new.",
+  "truncated": false,
+  "rating": 4
+ },
+ {
+  "source": "review",
+  "id": "RV-004855",
+  "merchant_id": "M10003",
+  "date": "2026-01-17",
+  "text": "Not bad at all. They did seem very keen to sell me a membership at the end, with leaflets and a form on a clipboard. I just wanted to go home and have a cuppa.",
+  "truncated": false,
+  "rating": 3
+ },
+ {
+  "source": "rep_note",
+  "id": "N-009441",
+  "merchant_id": "M10003",
+  "date": "2026-01-21",
+  "text": "cap lifted approx 71 after chat. Jas keen",
+  "truncated": false
+ },
+ {
+  "source": "review",
+  "id": "RV-005087",
+  "merchant_id": "M10003",
+  "date": "2026-01-27",
+  "text": "good value and a really good therapist. my neck thanks you",
+  "truncated": false,
+  "rating": 4
+ },
+ {
+  "source": "alert_reply",
+  "id": "DAR-001520",
+  "merchant_id": "M10003",
+  "date": "2026-03-13",
+  "text": "We have the Monday top up so no need to do anything thanks - Jas",
+  "truncated": false
+ },
+ {
+  "source": "alert_reply",
+  "id": "DAR-001717",
+  "merchant_id": "M10003",
+  "date": "2026-04-14",
+  "text": "Hi there, we set up the monthly top-up back in the spring and it's been working fine ever since, so there's no need for us to click anything. Regards, Jas",
+  "truncated": false
+ },
+ {
+  "source": "refund_reason",
+  "id": "RF-003106",
+  "merchant_id": "M10003",
+  "date": "2026-04-27",
+  "text": "Wrong quantity ordered, 4 rather than 2, refund 2 pls, all unredeemed",
+  "truncated": false,
+  "amount_gbp": 59.0
+ },
+ {
+  "source": "rep_note",
+  "id": "N-011382",
+  "merchant_id": "M10003",
+  "date": "2026-05-08",
+  "text": "quick one. yes. 85",
+  "truncated": false
+ },
+ {
+  "source": "review",
+  "id": "RV-007045",
+  "merchant_id": "M10003",
+  "date": "2026-05-14",
+  "text": "Took my dad, who's 74 and grumpy about anything fancy. He's already asking when we can go again.",
+  "truncated": false,
+  "rating": 4
+ },
+ {
+  "source": "rep_note",
+  "id": "N-011921",
+  "merchant_id": "M10003",
+  "date": "2026-06-05",
+  "text": "wren on my list again. it refills monday. ignoring",
+  "truncated": false
+ },
+ {
+  "source": "review",
+  "id": "RV-008596",
+  "merchant_id": "M10003",
+  "date": "2026-08-06",
+  "text": "Pleasantly surprised by how professional it all was. A full body massage with proper pressure, towels warm, lovely scent in the room. Would happily pay full price next time.",
+  "truncated": false,
+  "rating": 5
+ },
+ {
+  "source": "refund_reason",
+  "id": "RF-003927",
+  "merchant_id": "M10003",
+  "date": "2026-08-10",
+  "text": "Purchased twice due to site freezing, refunding second order",
+  "truncated": false,
+  "amount_gbp": 49.0
+ },
+ {
+  "source": "rep_note",
+  "id": "N-008011",
+  "merchant_id": "M11287",
+  "date": "2025-11-13",
+  "text": "Bank details change for the barbers! Zara sent over the form himself and I double-checked the sort code with him on the phone because I'm paranoid. Finance have it now, and he says the chairs have been absolutely rammed.",
+  "truncated": false
+ },
+ {
+  "source": "refund_reason",
+  "id": "RF-001544",
+  "merchant_id": "M11287",
+  "date": "2025-11-19",
+  "text": "wrong date selected by mistake, would rather refund than rebok",
+  "truncated": false,
+  "amount_gbp": 20.0
+ },
+ {
+  "source": "rep_note",
+  "id": "N-008214",
+  "merchant_id": "M11287",
+  "date": "2025-11-22",
+  "text": "Spoke to Zara about the sell-out. She wanted a breather for a couple of weeks, but is now happy to relaunch with a fresh mini golf round deal in July with a cap of 21. Nice and calm chat, she's a lovely lady.",
+  "truncated": false
+ },
+ {
+  "source": "review",
+  "id": "RV-004562",
+  "merchant_id": "M11287",
+  "date": "2026-01-03",
+  "text": "Honestly the best £ I've spent in ages. We'll be back.",
+  "truncated": false,
+  "rating": 5
+ },
+ {
+  "source": "review",
+  "id": "RV-004919",
+  "merchant_id": "M11287",
+  "date": "2026-01-19",
+  "text": "Booked on a whim after a rough week at work and the mini golf round was exactly what I needed. Staff couldn't have been nicer.",
+  "truncated": false,
+  "rating": 5
+ },
+ {
+  "source": "rep_note",
+  "id": "N-009598",
+  "merchant_id": "M11287",
+  "date": "2026-01-29",
+  "text": "Right, so Zara has gone a bit quiet on the next steps, but in a good way I think? He's tinkering with what's in the mini golf round and promised an email by next Thursday. Watch this space 👀",
+  "truncated": false
+ },
+ {
+  "source": "alert_reply",
+  "id": "DAR-001423",
+  "merchant_id": "M11287",
+  "date": "2026-02-27",
+  "text": "Afternoon, yes please to a top up, 25 if possible. Thanks very much, Zara",
+  "truncated": false
+ },
+ {
+  "source": "refund_reason",
+  "id": "RF-002791",
+  "merchant_id": "M11287",
+  "date": "2026-03-18",
+  "text": "Two vouchers on same email, one is enough",
+  "truncated": false,
+  "amount_gbp": 25.0
+ },
+ {
+  "source": "refund_reason",
+  "id": "RF-003429",
+  "merchant_id": "M11287",
+  "date": "2026-06-09",
+  "text": "Relocating abroad for work, can't redeem befroe leaving",
+  "truncated": false,
+  "amount_gbp": 20.0
+ },
+ {
+  "source": "rep_note",
+  "id": "N-012477",
+  "merchant_id": "M11287",
+  "date": "2026-06-30",
+  "text": "Lovely long chat with Zara, who's been run off her feet with the school holidays but was still bubbly. Deal's performing nicely, customers are happy, and we'll have another natter in 8 weeks about a new offer for July.",
+  "truncated": false
+ },
+ {
+  "source": "review",
+  "id": "RV-008134",
+  "merchant_id": "M11287",
+  "date": "2026-07-11",
+  "text": "Really enojyed it, thanks! Friendly people, great atmosphere and I came away feeling a million dollars.",
+  "truncated": false,
+  "rating": 5
+ },
+ {
+  "source": "review",
+  "id": "RV-008323",
+  "merchant_id": "M11287",
+  "date": "2026-07-21",
+  "text": "Took my nan along and she loved the mini golf round more than I did, which says a lot. Thank you for making it so easy for everyone!",
+  "truncated": false,
+  "rating": 5
+ },
+ {
+  "source": "refund_reason",
+  "id": "RF-003854",
+  "merchant_id": "M11287",
+  "date": "2026-08-01",
+  "text": "Cust rang, double charged for mini golf round, one order to be returned",
+  "truncated": false,
+  "amount_gbp": 39.0
+ },
+ {
+  "source": "rep_note",
+  "id": "N-013238",
+  "merchant_id": "M11287",
+  "date": "2026-08-11",
+  "text": "Dropped in mid-afternoon and Zara was repainting the treatment room themselves, paint in their hair and everything, love that! 😂 We chatted about their holiday plans for July and the fact the neighbours have finally stopped complaining about the bins. Not much on deals this time, just building the relationship, which is half the job honestly. Had a proper good chat today, mate. Zara reckons the deal's been a lovely little earner and wants to keep the same format going. We did chat about fresh ph",
+  "truncated": true
+ },
+ {
+  "source": "rep_note",
+  "id": "N-013547",
+  "merchant_id": "M11287",
+  "date": "2026-08-25",
+  "text": "Chatty one today! Zara told me the mini golf round has brought in loads of new faces and half of them have rebooked. Cap's up to 29, and I'm popping in for a coffee when I'm next that way ☕",
+  "truncated": false
+ },
+ {
+  "source": "refund_reason",
+  "id": "RF-004080",
+  "merchant_id": "M11287",
+  "date": "2026-09-01",
+  "text": "Gift not wanted, recipient already has one. Within 14 days.",
+  "truncated": false,
+  "amount_gbp": 49.0
+ },
+ {
+  "source": "review",
+  "id": "RV-009110",
+  "merchant_id": "M11287",
+  "date": "2026-09-04",
+  "text": "Great service, great experience, great price. Simple as that.",
+  "truncated": false,
+  "rating": 4
+ },
+ {
+  "source": "rep_note",
+  "id": "N-008772",
+  "merchant_id": "M12300",
+  "date": "2025-12-16",
+  "text": "Rang Becky about the Christmas version of the set menu for two deal and she wants a gift-wrap option added. Done and dusted, with £3 on top for the ribbon. Apparently Jade ties a cracking bow.",
+  "truncated": false
+ },
+ {
+  "source": "review",
+  "id": "RV-004626",
+  "merchant_id": "M12300",
+  "date": "2026-01-06",
+  "text": "Quality evening. Candles, good music, and a set menu for two that tasted like it was made with care.",
+  "truncated": false,
+  "rating": 5
+ },
+ {
+  "source": "rep_note",
+  "id": "N-009445",
+  "merchant_id": "M12300",
+  "date": "2026-01-21",
+  "text": "Mate, what a morning! Becky rang me, not the other way round, because a guest said they never got their confirmation email. Support found it had landed in junk, resent it, and now there's a sticky note by the till reminding people to check their spam folder. 📬",
+  "truncated": false
+ },
+ {
+  "source": "refund_reason",
+  "id": "RF-002395",
+  "merchant_id": "M12300",
+  "date": "2026-02-01",
+  "text": "Clicked through twice from the eail and paid both times, sorry!!",
+  "truncated": false,
+  "amount_gbp": 29.0
+ },
+ {
+  "source": "rep_note",
+  "id": "N-010111",
+  "merchant_id": "M12300",
+  "date": "2026-02-28",
+  "text": "Becky wants the VAT invoice split out by month because her bookkeeper has gone all spreadsheet-happy. Fair enough, I say, and I've asked finance to do it properly. Told her she'd have it by Wednesday and she said 'you're a star'. Always nice to hear!",
+  "truncated": false
+ },
+ {
+  "source": "refund_reason",
+  "id": "RF-002781",
+  "merchant_id": "M12300",
+  "date": "2026-03-16",
+  "text": "NO AVAILABILITY AT ALL. Been trying since the voucher arrived and the nearest appointment is 8 weeks after it runs out. This is ridiculous.",
+  "truncated": false,
+  "amount_gbp": 19.0
+ },
+ {
+  "source": "review",
+  "id": "RV-006148",
+  "merchant_id": "M12300",
+  "date": "2026-03-26",
+  "text": "overpriced for what you get, even with the discount. staff seemed bored",
+  "truncated": false,
+  "rating": 1
+ },
+ {
+  "source": "review",
+  "id": "RV-006480",
+  "merchant_id": "M12300",
+  "date": "2026-04-12",
+  "text": "Dead good, this. We got loads for our money and the portions were massive. Will be telling the whole family.",
+  "truncated": false,
+  "rating": 5
+ },
+ {
+  "source": "refund_reason",
+  "id": "RF-003249",
+  "merchant_id": "M12300",
+  "date": "2026-05-17",
+  "text": "Refund agreed, customer got cold feet",
+  "truncated": false,
+  "amount_gbp": 29.0
+ },
+ {
+  "source": "refund_reason",
+  "id": "RF-003596",
+  "merchant_id": "M12300",
+  "date": "2026-06-26",
+  "text": "Dupe sale, keeping first voucher only",
+  "truncated": false,
+  "amount_gbp": 29.0
+ },
+ {
+  "source": "review",
+  "id": "RV-007975",
+  "merchant_id": "M12300",
+  "date": "2026-07-02",
+  "text": "Tried the set menu for two with my husband after a long week and it was just what we needed. Nobody hurried us, the music was low enough to talk over, and we walked home happy.",
+  "truncated": false,
+  "rating": 4
+ },
+ {
+  "source": "review",
+  "id": "RV-008183",
+  "merchant_id": "M12300",
+  "date": "2026-07-13",
+  "text": "Date night sorted! Good music, good cocktails and the set menu for two was a lovely surprise. Would happily pay normal price next time.",
+  "truncated": false,
+  "rating": 4
+ },
+ {
+  "source": "rep_note",
+  "id": "N-013230",
+  "merchant_id": "M12300",
+  "date": "2026-08-11",
+  "text": "Rang Becky this morning, no reply, so I've left a message and dropped them an email with the Deal Alert link. Between you and me, I think they're probably on the auto top-up anyway, but I like to check in. Will try again in 8 weeks.",
+  "truncated": false
+ },
+ {
+  "source": "refund_reason",
+  "id": "RF-004016",
+  "merchant_id": "M12300",
+  "date": "2026-08-20",
+  "text": "Booking cancelled by the merchant by text at 8am on the morning. No alternative offered. Refund requested as I cant make any other day before it runs out.",
+  "truncated": false,
+  "amount_gbp": 29.0
+ },
+ {
+  "source": "rep_note",
+  "id": "N-013731",
+  "merchant_id": "M12300",
+  "date": "2026-09-06",
+  "text": "Renewal chat was a long one today, mate! 😅 Becky wants to think about the commission, but then went on for ages about how busy April was, so I reckon she'll sign by Wednesday. Following up then with a cuppa in hand.",
+  "truncated": false
+ },
+ {
+  "source": "review",
+  "id": "RV-009173",
+  "merchant_id": "M12300",
+  "date": "2026-09-07",
+  "text": "Sunday lunch with the grandchildren and everyone went home happy, even the fussy one. The set menu for two was spot on.",
+  "truncated": false,
+  "rating": 4
+ },
+ {
+  "source": "alert_reply",
+  "id": "DAR-002664",
+  "merchant_id": "M12300",
+  "date": "2026-09-27",
+  "text": "Done it, link clicked. Sent from my phone",
+  "truncated": false
+ },
+ {
+  "source": "rep_note",
+  "id": "N-014189",
+  "merchant_id": "M12300",
+  "date": "2026-09-27",
+  "text": "Lovely natter with Becky about the new menu, which sounds incredible, I'm already hungry! Deal's doing its job, nothing to change, and he's up for a set menu for two with a little bonus course thrown in for April.",
+  "truncated": false
+ },
+ {
+  "source": "refund_reason",
+  "id": "RF-004399",
+  "merchant_id": "M12300",
+  "date": "2026-10-12",
+  "text": "Tapped buy on the set menu for two voucher by mistake while scrolling on the bus, wants it cancelled",
+  "truncated": false,
+  "amount_gbp": 15.0
+ },
+ {
+  "source": "review",
+  "id": "RV-010214",
+  "merchant_id": "M12300",
+  "date": "2026-11-02",
+  "text": "Went all the way from Sheffield for this. Cancelled on arrival because their 'system was down'. Not a penny of petrol money offered.",
+  "truncated": false,
+  "rating": 2
+ },
+ {
+  "source": "rep_note",
+  "id": "N-008383",
+  "merchant_id": "M12863",
+  "date": "2025-11-28",
+  "text": "was at 15. bumped to 35. easy",
+  "truncated": false
+ },
+ {
+  "source": "rep_note",
+  "id": "N-009036",
+  "merchant_id": "M12863",
+  "date": "2025-12-28",
+  "text": "dry jan mocktail night? daft but O likes it",
+  "truncated": false
+ },
+ {
+  "source": "review",
+  "id": "RV-004814",
+  "merchant_id": "M12863",
+  "date": "2026-01-14",
+  "text": "Easy. Quick check-in, lovely spa day, left happy.",
+  "truncated": false,
+  "rating": 4
+ },
+ {
+  "source": "rep_note",
+  "id": "N-009412",
+  "merchant_id": "M12863",
+  "date": "2026-01-20",
+  "text": "email bounced?? phone Thursday instead",
+  "truncated": false
+ },
+ {
+  "source": "review",
+  "id": "RV-006100",
+  "merchant_id": "M12863",
+  "date": "2026-03-23",
+  "text": "Zero pressure, loads of care. I'd been dreading the hard sell but it never came, so I could simply enjoy it.",
+  "truncated": false,
+  "rating": 5
+ },
+ {
+  "source": "review",
+  "id": "RV-006116",
+  "merchant_id": "M12863",
+  "date": "2026-03-24",
+  "text": "omg loved it. my skin has never felt this soft, booking again for payday",
+  "truncated": false,
+  "rating": 5
+ },
+ {
+  "source": "rep_note",
+  "id": "N-010744",
+  "merchant_id": "M12863",
+  "date": "2026-04-06",
+  "text": "rang re spa day. yes to 45. done while on phone",
+  "truncated": false
+ },
+ {
+  "source": "review",
+  "id": "RV-006350",
+  "merchant_id": "M12863",
+  "date": "2026-04-06",
+  "text": "Smashing. That's all really.",
+  "truncated": false,
+  "rating": 5
+ },
+ {
+  "source": "rep_note",
+  "id": "N-011052",
+  "merchant_id": "M12863",
+  "date": "2026-04-20",
+  "text": "gave O the number, said go for it. 40",
+  "truncated": false
+ },
+ {
+  "source": "refund_reason",
+  "id": "RF-003534",
+  "merchant_id": "M12863",
+  "date": "2026-06-19",
+  "text": "Unwanted present, customer returning voucher unused",
+  "truncated": false,
+  "amount_gbp": 45.0
+ },
+ {
+  "source": "alert_reply",
+  "id": "DAR-002409",
+  "merchant_id": "M12863",
+  "date": "2026-08-15",
+  "text": "Afternoon, yes happy for you to lift the limit to 30. We are a small team, just three staff, so please not higher. Thanks, Olly",
+  "truncated": false
+ },
+ {
+  "source": "review",
+  "id": "RV-009480",
+  "merchant_id": "M12863",
+  "date": "2026-09-23",
+  "text": "Really impressed with the attention to detail. Nadia checked I was comfy at every stage.",
+  "truncated": false,
+  "rating": 5
+ },
+ {
+  "source": "rep_note",
+  "id": "N-014728",
+  "merchant_id": "M12863",
+  "date": "2026-10-24",
+  "text": "new gm starts April. Olly to intro us then",
+  "truncated": false
+ }
+]

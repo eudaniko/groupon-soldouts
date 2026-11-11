@@ -62,3 +62,40 @@ class LlmTest(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class OfflineFromFileTest(unittest.TestCase):
+    """What a facilitator can run with no network and no key: the sample file + recorded LLM answers."""
+    FIXTURE = "tests/fixtures/sample_items.json"
+
+    def setUp(self):
+        from pathlib import Path
+        root = Path(__file__).resolve().parents[1]
+        self.path = str(root / self.FIXTURE)
+        self.items = json.load(open(self.path, encoding="utf-8"))
+        self.recorded = json.load(open(root / "data" / "flags_llm.json", encoding="utf-8"))
+
+    def test_replay_reproduces_the_recorded_answers(self):
+        out = detect.detect(detect.group(self.items), backend="replay", recorded=self.recorded)
+        self.assertEqual(len(out), 5)
+        for mid, got in out.items():
+            rec = self.recorded[mid]
+            self.assertEqual([f["quote"] for f in got["flags"]], [f["quote"] for f in rec["flags"]], mid)
+            self.assertEqual(len(got["dropped"]), len(rec.get("dropped", [])), mid)
+            for f in got["flags"]:  # every kept quote is really in the cited item
+                text = next(i["text"] for i in self.items if i["id"] == f["item_id"])
+                self.assertIn(detect._norm(f["quote"].rstrip(".…")), detect._norm(text))
+
+    def test_replay_drops_a_recorded_quote_that_isnt_in_the_text(self):
+        mid = "M12300"
+        items = [dict(i, text="(edited away)") if i["merchant_id"] == mid else i for i in self.items]
+        out = detect.detect(detect.group(items), backend="replay", recorded=self.recorded)
+        self.assertEqual(out[mid]["flags"], [])
+
+    def test_cli_runs_from_the_file(self):
+        import tempfile, os
+        with tempfile.TemporaryDirectory() as tmp:
+            for backend in ("rules", "replay"):
+                path = os.path.join(tmp, backend + ".json")
+                detect.main(["--items", self.path, "--backend", backend, "--today", "2026-11-11", "--out", path])
+                self.assertEqual(len(json.load(open(path))), 5)

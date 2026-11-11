@@ -32,9 +32,21 @@ Notes for anyone changing things:
 - Value per task comes from the input file; routing does not compute it.
 - The input file's column order matters to the importer, so add columns at the end.
 
-## Sold-out suppression (not wired yet)
+## Sold-out suppression (wired in 2.16.0, off by default)
 
-Agreed in October so reps stop getting tasks that don't need them. Only the plumbing exists:
+Agreed in October so reps stop getting tasks that don't need them.
+
+What 2.16.0 does, only when `suppress_soldout_tasks` is JSON `true` (after `env_overrides.json` is applied):
+
+- Reads `suppression_file`. A row with a `deal_id` drops that deal's sold-out task; a row with only a `merchant_id` drops all of that merchant's sold-out tasks.
+- A promised callback is never suppressed. Do-not-contact, `suppressed_deal_ids` and the failed-attempt pause work as before.
+- The freed minutes are filled from the carry-over, as for any other dropped task.
+- Logs `sold-out suppression ON: N task(s) not created` to stderr each run.
+- Any other value of the switch (`"true"` as a string, `1`, missing) means off.
+
+With the switch off, the output is identical to 2.15.0 (tested). Rollback = set the switch to `false` in whichever file set it to `true`.
+
+Original notes:
 
 - `suppress_soldout_tasks` in `config/routing.json`. Default `false`. This is the one switch.
 - `input/suppressions.csv`, read by `routing/suppressions.py` (`load_suppressions()`). A row needs a `deal_id`, or a `merchant_id` for the whole merchant.
@@ -46,4 +58,4 @@ Whoever picks it up: decide what goes in the file and why, wire it into `plan.py
 
 - Changes go to Wednesday change review, then Merchant Ops deploys. Config changes count as changes.
 - Peak change freeze: nothing touches routing or its config until 7 January.
-- Version: 2.15.0 (2.15.0 added the suppression switch and file, unused)
+- Version: 2.16.0 (wires the sold-out suppression behind the switch; 2.15.0 added the switch and file, unused)

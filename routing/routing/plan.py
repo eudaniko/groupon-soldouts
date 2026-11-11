@@ -4,6 +4,8 @@ import json
 import sys
 from pathlib import Path
 
+from routing.suppressions import load_suppressions
+
 ROOT = Path(__file__).resolve().parent.parent
 
 # Used when a key is missing from config/routing.json.
@@ -41,19 +43,52 @@ def expected_gp(row, priors):
     return (p["called"] - p["left_alone"]) * float(row["value_30d_gbp"])
 
 
-def is_active(row, config):
+def suppression_on(config):
+    """The sold-out suppression switch. Only a real JSON true turns it on.
+
+    A string such as "false" in env_overrides.json would be truthy in Python, so we
+    compare with `is True` on purpose: anything unexpected means off.
+    """
+    return config.get("suppress_soldout_tasks") is True
+
+
+def load_suppression_sets(config):
+    """(deal_ids, merchant_ids) to leave out, or (set(), set()) when the switch is off."""
+    if not suppression_on(config):
+        return set(), set()
+    rows = load_suppressions(ROOT / config["suppression_file"])
+    return ({r["deal_id"] for r in rows if r["deal_id"]},
+            {r["merchant_id"] for r in rows if r["merchant_id"] and not r["deal_id"]})
+
+
+def is_suppressed(row, suppressions):
+    """Sold-out suppression. Never applies to a promised callback: someone told the merchant we'd ring."""
+    deals, merchants = suppressions
+    if row["callback_promised"] == "1":
+        return False
+    return row["deal_id"] in deals or row["merchant_id"] in merchants
+
+
+def is_active(row, config, suppressions=(frozenset(), frozenset())):
     if row["do_not_contact"] == "1":
         return False
     if row["deal_id"] in set(config.get("suppressed_deal_ids", [])):
         return False
+    if is_suppressed(row, suppressions):
+        return False
     return True
 
 
-def build_plan(rows, priors=None, config=None):
-    """Return (today's list, carried over). Each item is a dict with task and rank details."""
+def build_plan(rows, priors=None, config=None, suppressions=None):
+    """Return (today's list, carried over). Each item is a dict with task and rank details.
+
+    With suppress_soldout_tasks off (the default) the output is exactly what 2.15.0 produced.
+    """
     priors = priors or load_priors()
     config = config or load_config()
-    active = [r for r in rows if is_active(r, config)]
+    if suppressions is None:
+        suppressions = load_suppression_sets(config)
+    active = [r for r in rows if is_active(r, config, suppressions)]
     promised = [r for r in active if r["callback_promised"] == "1"]
     rest = [r for r in active
             if r["callback_promised"] != "1" and int(r["failed_attempts"]) < config["max_failed_attempts"]]
@@ -75,7 +110,13 @@ def build_plan(rows, priors=None, config=None):
 
 
 if __name__ == "__main__":
-    today, carried = build_plan(load_rows(sys.argv[1]))
+    rows = load_rows(sys.argv[1])
+    config = load_config()
+    suppressions = load_suppression_sets(config)
+    if suppression_on(config):
+        n = sum(1 for r in rows if is_suppressed(r, suppressions))
+        print(f"sold-out suppression ON: {n} task(s) not created", file=sys.stderr)
+    today, carried = build_plan(rows, config=config, suppressions=suppressions)
     for item in today:
         print(item["task_id"], item["merchant_name"], item["reason"], item["expected_gp"])
     print(f"carried over: {len(carried)}")

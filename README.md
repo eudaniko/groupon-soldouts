@@ -36,7 +36,7 @@ The data pack (`data-pack.zip` from the Desk) goes in `data/pack/` for the scrip
 | Rep tool (phone) | `soldouts/app.py`, `soldouts/static/index.html` | Works. Rep filter, call / something else / later / skip, £ value, quotes, merchant marks |
 | Money logic | `soldouts/money.py`, `soldouts/decide.py` | Works, tested. Code does the sums |
 | Text flags (AI) | `soldouts/detect.py`, `soldouts/texts.py` | Rules backend offline; LLM backend with word-for-word quote check; results cached |
-| Routing change | `routing/` (2.15.0 imported as-is, then changed in one commit) | Done, tested, off by default |
+| Routing change | `proposal/env_overrides.json` (config-only, for the freeze); `routing/` 2.16.0 code version for January | Done, tested, off by default |
 | Suppression list | `scripts/build_suppressions.py` -> `proposal/suppressions.csv` | Generated, not installed |
 | Measurement | `soldouts/measure.py`, `soldouts/holdout.py` | Estimate + readout scripts |
 | Analysis | `scripts/estimate_uplift.py` -> `data/uplift.json` | Re-check of Priya's memo |
@@ -63,13 +63,15 @@ The £340k multiplies £11 by every task, but 28% are already called, the ones l
 
 **2. The routing change is narrow on purpose.** Only deals with an open-ended auto-replenish schedule, bands B to D. Not band A: too few calls to be sure (the interval runs from £2.7 to £27.8). Not "every low-value task": that's a bigger change to how reps work and Dan, Renee and Greg should decide it, not me in three hours. It is the part I'm most sure is safe: about 77 tasks a week, ~15 rep hours, and at most ~£800 a year of GP at risk.
 
-**3. Off by default, one switch, rollback = switch off.** The switch and the empty suppression file already existed in routing 2.15.0 ("agreed in October"). I wired them in `plan.py`: with the switch off the output is identical (tested); promised callbacks are never suppressed; only JSON `true` turns it on (a string `"false"` in `env_overrides.json` would otherwise be truthy).
+**3a. For the freeze: config-only.** Greg's condition was "config-only, or it's January". So what goes to Friday's gate is `proposal/env_overrides.json`: the existing priors override unchanged, plus `routing.suppressed_deal_ids` with Ops' 3 existing ids (the override replaces the list in `routing.json`, so they must be carried over) and the 1,097 auto-replenish deals. No code change; routing already honours that list. Off = delete the `routing` block (tested: identical output). Known limit: in 2.15.0 a suppressed deal also loses a promised callback. The code change below fixes that and waits for January.
+
+**3. The code version (2.16.0, for January): off by default, one switch, rollback = switch off.** The switch and the empty suppression file already existed in routing 2.15.0 ("agreed in October"). I wired them in `plan.py`: with the switch off the output is identical (tested); promised callbacks are never suppressed; only JSON `true` turns it on (a string `"false"` in `env_overrides.json` would otherwise be truthy).
 
 **4. The list only uses schedules that run past the freeze** (no end date, or ending after 7 January). Routing reads the file once per run and nobody can regenerate it during the freeze, so a schedule ending in December would leave a deal suppressed with nothing topping it up.
 
 **5. Holdout: 20% of merchants, by a stable hash**, keep getting tasks. The readout compares the same kind of sold-out in both groups, so peak season hits both.
 
-**6. Money: value = P(connect) x GP uplift x (1 - refund risk) - rep time.** Per band uplift from the table; P(connect) is the merchant's own history pulled towards the band rate; refund risk is the merchant's refunds over the last 6 months as a share of GP + refunds, doubled if the text says they can't take more customers (the 30-day GP misses refunds that come later). Rep time is 12 minutes at **£20/hour, an assumption** (asked Priya for the real figure). At £20/h most band C and D tasks are worth less than the rep's time.
+**6. Money: value = P(connect) x GP uplift x (1 - refund risk) - rep time.** Per band uplift from the table; P(connect) is the merchant's own history pulled towards the band rate; refund risk is the merchant's refunds over the last 6 months as a share of GP + refunds, doubled if the text says they can't take more customers (the 30-day GP misses refunds that come later). Rep time is 12 minutes at **£20/hour, an assumption**: Priya has no loaded cost; Dan said use it, but label it an assumption and make it easy to change. The page shows it as an assumption and lets you change it (`?rate=`), and `REP_HOURLY_COST_GBP` sets the default. At £20/h most band C and D tasks are worth less than the rep's time.
 
 **7. Decision order** (`soldouts/decide.py`): do-not-contact, promised callback, the rep's own mark, auto-replenish, merchant said no, merchant away (only if said in the last 3 weeks), capacity or quality problem (then: talk capacity, not a bigger cap), Deal Alert link trouble (then: send login help, not a sales call), then the £ value.
 

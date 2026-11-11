@@ -107,6 +107,9 @@ def decide(soldout, merchant, schedules, flags, uplift, mark=None, hourly=None):
 
     if q := _strong(flags, "no_restock_wanted"):
         return Decision(SKIP, "Skip: merchant said no", "From the merchant's own words.", v, maths, q)
+    if q := [f for f in _strong(flags, "auto_topup") if f["source"] in MERCHANT_VOICE]:
+        return Decision(SKIP, "Skip: merchant says it tops up", "Our schedule export doesn't show it, but the merchant "
+                        "or rep says the cap tops up by itself. Worth telling Merchant Ops.", v, maths, q)
     q = [f for f in _strong(flags, "temporarily_away") if _days_between(f["date"], soldout["sold_out_date"]) <= 21]
     if q:
         newest = q[0]

@@ -86,7 +86,7 @@ class State:
             if not m or (rep and m["rep_id"] != rep):
                 continue
             so = {"deal_id": r["deal_id"], "merchant_id": mid,
-                  "sold_out_date": (r.get("sold_out_date") or date.today().isoformat())[:10],
+                  "sold_out_date": (r.get("sold_out_date") or r.get("sold_out_at") or date.today().isoformat())[:10],
                   "callback_promised": r.get("callback_promised", "0")}
             f = self.flags_for(mid, so["sold_out_date"])
             d = decide.decide(so, m, self.ctx["schedules"], f.get("flags", []), self.uplift, marks.get(mid))

@@ -18,4 +18,4 @@ Only automation. Every deal on the list is there because of an auto-replenish sc
 
 Known limit. In the current code suppressed_deal_ids also drops a promised callback on that deal. On auto-topped-up deals that should be rare; reps can still ring. Proper fix (callbacks never suppressed, behind suppress_soldout_tasks) is ready as 2.16.0 for January.
 
-Review. Hana: list + diff sent for review. Agreed by Thursday morning for Friday's gate; otherwise January.
+Review. Hana is getting the list and the config diff today. Agreed by Thursday morning for Friday's gate; otherwise January.

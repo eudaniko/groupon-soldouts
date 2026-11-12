@@ -18,6 +18,8 @@ python3 -m unittest discover -s tests      # tool tests
 
 On a shared server, set `APP_PASSWORD=...` (one team password): the tool then shows a sign-in page and keeps each phone signed in for 30 days with a signed cookie (HttpOnly; changing the password signs everyone out; 8 wrong tries from one address pause sign-in for 10 minutes). Scripts can still use basic auth (`curl -u x:$APP_PASSWORD`). Without it, there's no sign-in, for running it locally.
 
+With `OPEN_SIGN_IN=1` the same sign-in page has no password box: one tap on Sign in and you're in (same 30-day cookie). The hand-in copy runs this way, so anyone with the link can open it, and can also mark merchants. Remove the line from `.env` and restart to need the password again.
+
 With the sandbox: put `SANDBOX_KEY=...` in `.env` (git-ignored). The tool then reads `GET /soldouts/today` and writes marks with `PUT /merchants/{id}/mark`. Without it, it uses `routing/input/todays_soldouts.csv` and says "demo data" at the top.
 
 The AI detector, offline from a file (no network, no key):
@@ -141,4 +143,4 @@ What is checked meanwhile: every quote the LLM gives is checked word for word ag
 - **Running the LLM on all 3,000 merchants up front.** Cheap with Haiku (about $1), but not needed: the tool reads a merchant when it sells out. Worth doing before routing ever uses the flags.
 - **A rep-level holdout** to measure the upside of the freed time. 24 reps are too few to see it in weeks.
 - **Using Deal Alerts in the decision.** They help a bit (see above); not enough to change a call, and I ran out of time.
-- **Rep accounts, offline mode in the app.** One shared team password and a sign-in page on the hosted copy, no per-rep logins.
+- **Rep accounts, offline mode in the app.** One sign-in page with one shared team password (or none, with `OPEN_SIGN_IN=1`, as on the hand-in copy), no per-rep logins.

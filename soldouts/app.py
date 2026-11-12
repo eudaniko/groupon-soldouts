@@ -2,6 +2,7 @@
 
     python3 -m soldouts.app            # http://localhost:8080
     PORT=8090 APP_PASSWORD=... python3 -m soldouts.app   # with a sign-in page (one team password)
+    OPEN_SIGN_IN=1 python3 -m soldouts.app                # same sign-in page, one tap, no password
 
 Sold-outs come from the sandbox (GET /soldouts/today) when SANDBOX_KEY is set; otherwise from
 routing/input/todays_soldouts.csv and the page says "demo data". Marks go to the sandbox
@@ -15,6 +16,7 @@ import html
 import json
 import math
 import os
+import secrets
 import sys
 import threading
 import time
@@ -169,10 +171,22 @@ def parse_rate(text):
 # One team password (APP_PASSWORD). The sign-in page sets a signed cookie, so the password itself isn't
 # sent with every request (it was, with the browser's Basic pop-up). Basic auth still works for scripts
 # (curl -u x:$APP_PASSWORD). No APP_PASSWORD = no sign-in, for running it locally.
+# OPEN_SIGN_IN=1 keeps the sign-in page but drops the password: one tap signs you in (used for the
+# hand-in copy, so whoever has the link can open it). Basic auth with APP_PASSWORD still works then.
 COOKIE = "soldouts_session"
 SESSION_DAYS = 30
 MAX_FAILS, FAIL_WINDOW_S = 8, 600        # wrong passwords from one address before a 10-minute pause
 _fails = {}
+_PROCESS_KEY = secrets.token_hex(32)     # signs cookies when there is no APP_PASSWORD (open sign-in)
+
+
+def open_sign_in():
+    return os.environ.get("OPEN_SIGN_IN", "").strip().lower() in ("1", "true", "yes", "on")
+
+
+def session_key():
+    """What cookies are signed with: the team password, or a key that lives as long as the process."""
+    return os.environ.get("APP_PASSWORD") or _PROCESS_KEY
 
 
 def _sig(pw, issued):
@@ -222,9 +236,17 @@ def note_fail(ip, now=None):
     _fails.setdefault(ip, []).append(time.time() if now is None else now)
 
 
-def login_page(error="", next_path="/"):
+def login_page(error="", next_path="/", open_mode=None):
     page = (STATIC / "login.html").read_text(encoding="utf-8")
+    if open_sign_in() if open_mode is None else open_mode:
+        start, end = page.index("<!--password-->"), page.index("<!--/password-->") + len("<!--/password-->")
+        page = page[:start] + page[end:]
+        mode, sub = " open", "No password needed. Sign in to see today's list."
+    else:
+        mode, sub = "", "Use the team password you were given."
     return (page.replace("{{error_class}}", " has-error" if error else "")
+                .replace("{{mode_class}}", mode)
+                .replace("{{sub}}", sub)
                 .replace("{{error}}", html.escape(error))
                 .replace("{{next}}", html.escape(next_path, quote=True))).encode()
 
@@ -249,12 +271,12 @@ class Handler(BaseHTTPRequestHandler):
 
     def _auth_ok(self):
         pw = os.environ.get("APP_PASSWORD")
-        if not pw:
-            return True
-        if session_ok(pw, self._cookie()):
+        if not pw and not open_sign_in():
+            return True                                       # running locally: no sign-in at all
+        if session_ok(session_key(), self._cookie()):
             return True
         h = self.headers.get("Authorization", "")
-        if h.startswith("Basic "):
+        if pw and h.startswith("Basic "):
             try:
                 return password_ok(pw, base64.b64decode(h[6:]).decode().split(":", 1)[1])
             except Exception:
@@ -303,14 +325,17 @@ class Handler(BaseHTTPRequestHandler):
         n = min(int(self.headers.get("Content-Length", 0) or 0), 4096)
         form = parse_qs(self.rfile.read(n).decode("utf-8", "replace"))
         nxt = safe_next(form.get("next", ["/"])[0])
+        signed_in = lambda: self._redirect(nxt, self._session_cookie(make_session(session_key()), SESSION_DAYS * 86400))
+        if open_sign_in() or not pw:
+            return signed_in()                                # no password to check
         ip = self._client_ip()
         with _lock:
             blocked = too_many_fails(ip)
         html_type = "text/html; charset=utf-8"
         if blocked:
             return self._send(429, login_page("Too many wrong tries. Wait 10 minutes, then try again.", nxt), html_type)
-        if not pw or password_ok(pw, form.get("password", [""])[0]):
-            return self._redirect(nxt, self._session_cookie(make_session(pw), SESSION_DAYS * 86400))
+        if password_ok(pw, form.get("password", [""])[0]):
+            return signed_in()
         with _lock:
             note_fail(ip)
         time.sleep(0.6)                                       # slows down guessing

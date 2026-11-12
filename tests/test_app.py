@@ -45,6 +45,28 @@ class SessionTest(unittest.TestCase):
         for wrong in ("", None, "s3cre", "s3cret ", "S3CRET"):
             self.assertFalse(app.password_ok("s3cret", wrong))
 
+    def test_sign_in_page_with_and_without_a_password_box(self):
+        with_pw = app.login_page("", "/", open_mode=False).decode()
+        self.assertIn('type="password"', with_pw)
+        self.assertIn("Use the team password you were given.", with_pw)
+        open_page = app.login_page("", "/?rep=R10", open_mode=True).decode()
+        self.assertNotIn('type="password"', open_page)
+        self.assertNotIn("<!--password-->", open_page)
+        self.assertIn('class="card open"', open_page)
+        self.assertIn("No password needed.", open_page)
+        self.assertIn('name="next" value="/?rep=R10"', open_page)
+        self.assertIn(">Sign in</span>", open_page)
+        for page in (with_pw, open_page):
+            self.assertNotIn("{{", page)
+
+    def test_open_sign_in_switch(self):
+        for on in ("1", "true", "yes", "on", " 1 "):
+            with mock.patch.dict(os.environ, {"OPEN_SIGN_IN": on}):
+                self.assertTrue(app.open_sign_in(), on)
+        for off in ("", "0", "no", "false"):
+            with mock.patch.dict(os.environ, {"OPEN_SIGN_IN": off}):
+                self.assertFalse(app.open_sign_in(), off)
+
     def test_only_local_paths_after_sign_in(self):
         for good in ("/", "/?rep=R10", "/api/board"):
             self.assertEqual(app.safe_next(good), good)
@@ -52,14 +74,17 @@ class SessionTest(unittest.TestCase):
             self.assertEqual(app.safe_next(bad), "/", bad)
 
 
-class SignInFlowTest(unittest.TestCase):
+class ServerCase(unittest.TestCase):
     """The real server on a free local port, offline (no sandbox key, demo data)."""
+    ENV = {"APP_PASSWORD": "test-pass"}
+    DROP = ("OPEN_SIGN_IN",)
 
     @classmethod
     def setUpClass(cls):
-        cls.env = mock.patch.dict(os.environ, {"APP_PASSWORD": "test-pass"})
+        cls.env = mock.patch.dict(os.environ, cls.ENV)
         cls.env.start()
-        os.environ.pop("SANDBOX_KEY", None)
+        for k in ("SANDBOX_KEY",) + cls.DROP:
+            os.environ.pop(k, None)
         app.STATE = app.State()
         cls.srv = ThreadingHTTPServer(("127.0.0.1", 0), app.Handler)
         threading.Thread(target=cls.srv.serve_forever, daemon=True).start()
@@ -85,9 +110,11 @@ class SignInFlowTest(unittest.TestCase):
         return r, body
 
     def sign_in(self, pw, nxt="/"):
-        return self.req("POST", "/login", urlencode({"password": pw, "next": nxt}),
-                        {"Content-Type": "application/x-www-form-urlencoded"})
+        form = {"next": nxt} if pw is None else {"password": pw, "next": nxt}
+        return self.req("POST", "/login", urlencode(form), {"Content-Type": "application/x-www-form-urlencoded"})
 
+
+class SignInFlowTest(ServerCase):
     def test_signed_out_pages_go_to_sign_in_and_api_says_401(self):
         r, _ = self.req("GET", "/?rep=R10")
         self.assertEqual((r.status, r.getheader("Location")), (303, "/login?next=%2F%3Frep%3DR10"))
@@ -138,6 +165,65 @@ class SignInFlowTest(unittest.TestCase):
             r, body = self.sign_in("test-pass")                      # even the right one waits now
         self.assertEqual(r.status, 429)
         self.assertIn(b"Too many wrong tries", body)
+
+    def test_no_password_is_refused(self):
+        with mock.patch.object(app.time, "sleep"):
+            r, _ = self.sign_in(None)
+        self.assertEqual(r.status, 401)
+        self.assertIsNone(r.getheader("Set-Cookie"))
+
+
+class OpenSignInFlowTest(ServerCase):
+    """OPEN_SIGN_IN=1 (the hand-in copy): the sign-in page still comes first, one tap and no password."""
+    ENV = {"APP_PASSWORD": "test-pass", "OPEN_SIGN_IN": "1"}
+    DROP = ()
+
+    def test_sign_in_page_still_comes_first(self):
+        r, _ = self.req("GET", "/?rep=R10")
+        self.assertEqual((r.status, r.getheader("Location")), (303, "/login?next=%2F%3Frep%3DR10"))
+        self.assertEqual(self.req("GET", "/api/marks")[0].status, 401)
+        r, body = self.req("GET", "/login?next=%2F%3Frep%3DR10")
+        self.assertEqual(r.status, 200)
+        self.assertNotIn(b'type="password"', body)
+        self.assertIn(b"No password needed.", body)
+        self.assertIn(b'name="next" value="/?rep=R10"', body)
+
+    def test_one_tap_signs_in_without_a_password(self):
+        r, _ = self.sign_in(None, "/?rep=R10")
+        self.assertEqual((r.status, r.getheader("Location")), (303, "/?rep=R10"))
+        cookie = r.getheader("Set-Cookie")
+        for part in ("HttpOnly", "SameSite=Lax", f"Max-Age={30 * 86400}"):
+            self.assertIn(part, cookie)
+        session = cookie.split(";")[0]
+        self.assertEqual(self.req("GET", "/", headers={"Cookie": session})[0].status, 200)
+        self.assertEqual(self.req("GET", "/api/marks", headers={"Cookie": session})[0].status, 200)
+        forged = session.rsplit(".", 1)[0] + "." + "0" * 64
+        self.assertEqual(self.req("GET", "/api/marks", headers={"Cookie": forged})[0].status, 401)
+
+    def test_never_paused(self):
+        for _ in range(app.MAX_FAILS + 2):
+            self.assertEqual(self.sign_in("anything")[0].status, 303)
+
+    def test_basic_auth_still_works_for_scripts(self):
+        tok = base64.b64encode(b"x:test-pass").decode()
+        self.assertEqual(self.req("GET", "/api/marks", headers={"Authorization": "Basic " + tok})[0].status, 200)
+        tok = base64.b64encode(b"x:wrong").decode()
+        self.assertEqual(self.req("GET", "/api/marks", headers={"Authorization": "Basic " + tok})[0].status, 401)
+
+
+class OpenSignInWithoutTeamPasswordTest(ServerCase):
+    """OPEN_SIGN_IN=1 with no APP_PASSWORD at all: still a sign-in page, cookies signed with a process key."""
+    ENV = {"OPEN_SIGN_IN": "1"}
+    DROP = ("APP_PASSWORD",)
+
+    def test_page_then_one_tap(self):
+        self.assertEqual(self.req("GET", "/")[0].status, 303)
+        r, _ = self.sign_in(None)
+        self.assertEqual(r.status, 303)
+        session = r.getheader("Set-Cookie").split(";")[0]
+        self.assertEqual(self.req("GET", "/api/marks", headers={"Cookie": session})[0].status, 200)
+        tok = base64.b64encode(b"x:").decode()                 # no password = no basic auth either
+        self.assertEqual(self.req("GET", "/api/marks", headers={"Authorization": "Basic " + tok})[0].status, 401)
 
 
 if __name__ == "__main__":

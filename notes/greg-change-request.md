@@ -10,9 +10,9 @@ Holdout. 20% of eligible merchants (274 deals), picked by a fixed hash, stay off
 
 Stop rule. Off if any of these (lines 2 and 3 compare listed deals with the holdout, minus the same gap in the 12 weeks before launch):
 1. A rep or merchant reports a listed deal sold out for 14+ days.
-2. Restock: listed deals' 14-day restock rate is more than 12 points behind the holdout. Checked every Monday from week 6, when four weeks of sold-outs have had their 14 days.
-3. GP: listed deals' 30-day GP per sold-out is more than £6 below the holdout (average is ~£17). Checked every Monday from week 8, when four weeks of sold-outs have had their 30 days.
-Why these numbers: on a year of history with no change at all (a fake launch every week), line 2 was crossed by chance in 2–4% of reads and line 3 in 2%. (I had 10 points for line 2 before; checked properly, that would have fired by chance in up to 9% of reads.)
+2. Restock: listed deals' 14-day restock rate is more than 16 points behind the holdout (average is ~75%). Checked every Monday from week 6, when four weeks of sold-outs have had their 14 days.
+3. GP: listed deals' 30-day GP per sold-out is more than £8 below the holdout (average is ~£16). Checked every Monday from week 8, when four weeks of sold-outs have had their 30 days.
+Why these numbers: the two groups drift apart by themselves. Last winter, with no change at all, the comparison would have read up to 15 points and £7.50 behind, so tighter lines would fire by chance in exactly the freeze. Tested on a year of history with no change (a fake launch every day, put through the Monday checks): these lines would have stopped 1 launch in 100 by chance, and none of those made at this time of year. (I had 10 points before; tested this way, that would have stopped half the launches made at this time of year.) The flip side: the lines only catch a big drop. A small loss, like the ~£500 a year expected, is too small for a 20% holdout to see.
 Owner: Daniel runs the check every Monday (python3 -m soldouts.measure readout, which prints stop_now) and posts it in #uk-soldouts. Removal: Merchant Ops, as a production config deploy through you. Hana's switch is the sandbox one; this change doesn't use it.
 
 In the freeze. From Monday to 7 Jan nothing touches merchant config, so a removal in that window is a deploy you'd have to let through as an exception. If you'd rather not: on the numbers the list puts about £90 of GP at risk over the whole freeze (worst case ~£160), and reps can still ring any listed deal; it just isn't on their list.

@@ -23,9 +23,12 @@ from soldouts.holdout import in_holdout
 
 # Stop rule (Greg asked for numbers, not "credibly"). Effects are listed deals minus holdout,
 # minus the same gap in the 12 weeks before launch. Each line is only checked once four weeks of
-# sold-outs have had their full outcome window.
-STOP_RESTOCK = -0.12      # 14-day restock rate, 12 points
-STOP_GP = -6.0            # 30-day GP per sold-out, £6
+# sold-outs have had their full outcome window. The lines are wide on purpose: the two groups drift
+# apart by themselves, and with no change at all a launch at this time last year would have read up to
+# 15 points / £7.50 behind. scripts/aa_stop_lines.py: these lines stop 1% of 400 fake launches by
+# chance, and none of those made between late October and the end of November last year.
+STOP_RESTOCK = -0.16      # 14-day restock rate, 16 points (average ~75%)
+STOP_GP = -8.0            # 30-day GP per sold-out, £8 (average ~£16)
 RESTOCK_FROM_WEEK = 6     # 4 weeks of sold-outs + 14 days
 GP_FROM_WEEK = 8          # 4 weeks of sold-outs + 30 days
 GP_WINDOW_D = 30
@@ -149,8 +152,9 @@ def _did_ci(t_post, h_post, t_pre, h_pre, n=1000, seed=1):
 
     The holdout is picked by a hash, so the two groups are not identical and their gap moves around:
     about 0 over the whole history, but 'treated' restocked ~6 points less often (and made ~£4 less GP)
-    from mid-November to early January last year, with no change at all. Subtracting the pre-launch gap
-    removes most of that.
+    from mid-November to early January last year, with no change at all, after ~0 in the 12 weeks before.
+    Subtracting the gap before launch takes out a steady difference, not a drift like that one. The
+    interval only covers sampling noise, so it is too narrow: for how sure, use scripts/aa_stop_lines.py.
     """
     if min(len(t_post), len(h_post), len(t_pre), len(h_pre)) < 2:
         return None
@@ -215,9 +219,10 @@ def readout(pack, start, end=None, window_days=14, pre_weeks=12):
     out["stop_now"] = bool(out["stop_reasons"])
     out["read_as"] = ("Effects are [estimate, 90% low, 90% high]: listed deals minus holdout, minus the same gap in the "
                       "12 weeks before launch. Only sold-outs whose 14-day (restock) or 30-day (GP) window is over count. "
-                      "Rep hours saved is counted, not estimated. On history with no change (a fake launch every week, "
-                      "Aug 2025 to Sep 2026), the restock line was crossed by chance in 2-4% of reads and "
-                      "the GP line in 2%.")
+                      "Rep hours saved is counted, not estimated. On history with no change (a fake launch every day, "
+                      "Jul 2025 to Aug 2026, Monday checks to week 16), the stop lines stopped 1% of launches by "
+                      "chance, and none of those made at this time of year (scripts/aa_stop_lines.py). The 90% "
+                      "intervals only cover sampling noise; the groups also drift apart by themselves.")
     return out
 
 

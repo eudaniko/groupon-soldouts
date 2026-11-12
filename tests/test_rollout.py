@@ -84,16 +84,22 @@ class MeasureTest(unittest.TestCase):
 
 
 class StopRuleTest(unittest.TestCase):
-    """The numbers Greg gets: restock 12 points (from week 6), GP £6 per sold-out (from week 8)."""
+    """The numbers Greg gets: restock 16 points (from week 6), GP £8 per sold-out (from week 8)."""
+    def test_lines_are_the_ones_on_the_page(self):
+        self.assertEqual((measure.STOP_RESTOCK, measure.RESTOCK_FROM_WEEK), (-0.16, 6))
+        self.assertEqual((measure.STOP_GP, measure.GP_FROM_WEEK), (-8.0, 8))
+
     def test_restock_line(self):
-        self.assertEqual(measure.stop_check([-0.20, -0.3, -0.1], None, weeks_live=5), [])   # too early to read
-        self.assertTrue(measure.stop_check([-0.13, -0.2, 0.0], None, weeks_live=6))
-        self.assertEqual(measure.stop_check([-0.11, -0.2, 0.0], None, weeks_live=6), [])
+        self.assertEqual(measure.stop_check([-0.25, -0.3, -0.1], None, weeks_live=5), [])   # too early to read
+        self.assertTrue(measure.stop_check([-0.17, -0.25, -0.05], None, weeks_live=6))
+        # last winter's worst no-change read (-15 points) must not stop it
+        self.assertEqual(measure.stop_check([-0.15, -0.25, -0.05], None, weeks_live=6), [])
 
     def test_gp_line(self):
-        self.assertEqual(measure.stop_check(None, [-8.0, -12, -4], weeks_live=7), [])        # too early to read
-        self.assertTrue(measure.stop_check(None, [-6.5, -10, -3], weeks_live=8))
-        self.assertEqual(measure.stop_check(None, [-5.5, -10, -1], weeks_live=8), [])
+        self.assertEqual(measure.stop_check(None, [-10.0, -14, -6], weeks_live=7), [])       # too early to read
+        self.assertTrue(measure.stop_check(None, [-8.5, -12, -5], weeks_live=8))
+        # last winter's worst no-change read (-£7.54) must not stop it
+        self.assertEqual(measure.stop_check(None, [-7.54, -11, -4], weeks_live=8), [])
 
     def test_callback_count_on_todays_routing_input(self):
         res = measure.callbacks(ROOT / "routing" / "input" / "todays_soldouts.csv", ROOT / "proposal" / "env_overrides.json")

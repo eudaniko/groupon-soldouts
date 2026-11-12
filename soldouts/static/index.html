@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#f5f4f0">
 <title>Sold-outs today</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23f3c66b'/%3E%3Cg fill='none' stroke='%23183630' stroke-width='3' stroke-linecap='round' stroke-linejoin='round' transform='translate(4 4)'%3E%3Cpath d='M20 12a8 8 0 1 1-2.34-5.66'/%3E%3Cpath d='M20 4v5h-5'/%3E%3C/g%3E%3Ccircle cx='16' cy='16' r='2.6' fill='%23183630'/%3E%3C/svg%3E">
 <style>
 :root{--bg:#f5f4f0;--card:#fff;--ink:#16191a;--mute:#6a706d;--faint:#9aa09d;--line:#e3e1db;--chip:#ecebe6;
 --call:#157a46;--call-bg:#e3f3ea;--skip:#6b716e;--skip-bg:#eeeeeb;--later:#946300;--later-bg:#fbefd5;--other:#2456b8;--other-bg:#e5edfb;
@@ -64,6 +65,7 @@ textarea,input[type=text]{background:var(--bg);border:1px solid var(--line);bord
 .eq .res{background:var(--ab);border-color:transparent;color:var(--a);font-weight:800}
 .rule{display:inline-flex;align-items:center;gap:6px;margin-top:8px;font-size:12px;color:var(--a);background:var(--ab);border-radius:999px;padding:3px 10px;font-weight:650}
 .empty{color:var(--mute);text-align:center;padding:40px 0}
+.signout{text-align:center;margin:28px 0 0;font-size:13px}.signout a{color:var(--mute);text-decoration:none;border-bottom:1px solid var(--line);padding-bottom:1px}
 .note{font-size:12px;color:var(--mute);margin:4px 0 12px}
 .note b{color:var(--later);background:var(--later-bg);font-size:10.5px;padding:1px 6px;border-radius:999px;letter-spacing:.04em;text-transform:uppercase}
 .note input{width:52px;padding:2px 5px;border:1px solid var(--line);border-radius:7px;background:var(--card)}
@@ -95,6 +97,7 @@ textarea,input[type=text]{background:var(--bg);border:1px solid var(--line);bord
 <main>
   <p class="note" id="note"></p>
   <div id="list"><p class="empty">Loading today's sold-outs…</p></div>
+  <p class="signout"><a href="/logout">Sign out</a></p>
 </main>
 <div class="scrim" id="scrim"></div>
 <div class="sheet" role="dialog" aria-label="Pick a rep">
@@ -110,9 +113,12 @@ const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&g
 const ls=(k,v)=>{try{if(v!==undefined)localStorage.setItem(k,v);return localStorage.getItem(k)}catch(e){return null}};
 const ini=n=>n.split(/\s+/).map(w=>w[0]).join("").slice(0,2).toUpperCase();
 let board=null,rep=ls("rep")||"",tab="call",rate=ls("rate")||"",open={};
+function signIn(){location.href="/login?next="+encodeURIComponent(location.pathname+location.search)}
 async function load(){
   const qs=rate?`?rate=${encodeURIComponent(rate)}`:"";
-  board=await (await fetch("/api/board"+qs)).json();
+  const res=await fetch("/api/board"+qs);
+  if(res.status===401)return signIn();
+  board=await res.json();
   render();
 }
 function rows(){return rep?board.rows.filter(r=>r.rep_id===rep):board.rows}
@@ -189,6 +195,7 @@ document.addEventListener("submit",async e=>{
   b.disabled=true;b.textContent="Saving…";
   const res=await fetch("/api/mark",{method:"POST",headers:{"Content-Type":"application/json"},
     body:JSON.stringify({merchant_id:f.dataset.mid,mark:fd.get("mark"),reason:fd.get("reason"),marked_by:fd.get("marked_by")})});
+  if(res.status===401)return signIn();
   const j=await res.json();
   if(!res.ok){b.disabled=false;b.textContent="Save mark";b.insertAdjacentHTML("afterend",`<small style="color:#b33">${esc(j.error)}</small>`);return}
   open={};await load();

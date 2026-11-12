@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#183630">
+<meta name="robots" content="noindex">
+<title>Sign in · Sold-outs</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23f3c66b'/%3E%3Cg fill='none' stroke='%23183630' stroke-width='3' stroke-linecap='round' stroke-linejoin='round' transform='translate(4 4)'%3E%3Cpath d='M20 12a8 8 0 1 1-2.34-5.66'/%3E%3Cpath d='M20 4v5h-5'/%3E%3C/g%3E%3Ccircle cx='16' cy='16' r='2.6' fill='%23183630'/%3E%3C/svg%3E">
+<style>
+:root{
+  --g-900:#10231e;--g-800:#183630;--g-700:#1f4239;--g-600:#2b5649;--g-line:rgba(255,255,255,.10);
+  --on-g:#eef4ef;--on-g-mute:#a9bdb4;
+  --bg:#f6f1e7;--card:#fffdf8;--field:#fbf8f1;--line:#e5dece;--ink:#1a2421;--mute:#66706b;
+  --yellow:#f3c66b;--yellow-2:#ecb84f;--yellow-ink:#1c2a24;
+  --call:#4cc38a;--later:#f0b44c;--skip:#9fb0a8;
+  --danger:#a83a28;--danger-bg:#fbe8e3;--warn:#8a5a00;
+}
+@media (prefers-color-scheme:dark){
+  :root{--bg:#0e1916;--card:#15221e;--field:#101c18;--line:#28392f;--ink:#edf3ef;--mute:#9db0a7;--danger:#ff9a85;--danger-bg:#3b1c15;--warn:#f2c25e}
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased}
+.shell{min-height:100vh;min-height:100dvh;display:grid;grid-template-columns:minmax(400px,46%) 1fr}
+
+/* left: the team side, after the Desk sidebar */
+.brand{position:relative;isolation:isolate;overflow:hidden;color:var(--on-g);padding:40px 52px 36px;display:flex;flex-direction:column;justify-content:space-between;gap:40px;
+  background:radial-gradient(900px 520px at -15% -20%,#2f6050 0%,transparent 60%),radial-gradient(700px 480px at 115% 115%,#25493f 0%,transparent 62%),var(--g-800)}
+.brand::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+  background-image:radial-gradient(rgba(255,255,255,.07) 1px,transparent 1.2px);background-size:20px 20px;
+  -webkit-mask-image:linear-gradient(160deg,#000 0%,transparent 65%);mask-image:linear-gradient(160deg,#000 0%,transparent 65%)}
+.logo{display:flex;align-items:center;gap:11px;font-weight:700;font-size:18px;letter-spacing:-.01em}
+.mark{width:36px;height:36px;border-radius:11px;background:var(--yellow);display:grid;place-items:center;box-shadow:0 8px 22px rgba(0,0,0,.28),inset 0 -2px 0 rgba(0,0,0,.08)}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--on-g-mute);margin:0 0 14px}
+.eyebrow i{width:6px;height:6px;border-radius:50%;background:var(--call);box-shadow:0 0 0 4px rgba(76,195,138,.18)}
+h1{font-size:clamp(30px,3.3vw,44px);line-height:1.06;letter-spacing:-.025em;margin:0 0 16px;font-weight:760;max-width:15ch}
+h1 em{font-style:normal;color:var(--yellow)}
+.lede{color:var(--on-g-mute);font-size:16.5px;line-height:1.55;max-width:38ch;margin:0}
+.preview{list-style:none;margin:30px 0 0;padding:0;display:grid;gap:10px;max-width:380px}
+.pv{--c:var(--skip);position:relative;display:flex;align-items:center;gap:12px;padding:12px 14px 12px 16px;border-radius:14px;
+  background:rgba(255,255,255,.055);border:1px solid var(--g-line);overflow:hidden;animation:rise .6s cubic-bezier(.2,.7,.2,1) both}
+.pv::before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--c)}
+.pv.call{--c:var(--call)}.pv.later{--c:var(--later);animation-delay:.08s}.pv.skip{animation-delay:.16s}
+.pv b{font-size:12px;font-weight:700;color:var(--c);background:color-mix(in srgb,var(--c) 17%,transparent);padding:3px 0;width:54px;text-align:center;border-radius:999px;flex:none}
+.pv .ln{flex:1;display:grid;gap:6px}
+.pv .ln span{display:block;height:7px;border-radius:4px;background:rgba(255,255,255,.16)}
+.pv .ln span+span{width:62%;background:rgba(255,255,255,.09)}
+.pv .v{font-weight:800;font-size:15px;color:var(--c);font-variant-numeric:tabular-nums}
+.pv small{font-size:12px;color:var(--on-g-mute);white-space:nowrap}
+.foot{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--on-g-mute);margin:0}
+.foot svg{flex:none;opacity:.8}
+@keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* right: the sign-in card */
+.panel{position:relative;z-index:1;display:grid;place-items:center;padding:40px 24px}
+.card{width:100%;max-width:410px;background:var(--card);border:1px solid var(--line);border-radius:24px;padding:34px 30px 26px;
+  box-shadow:0 1px 2px rgba(16,35,30,.05),0 24px 60px -12px rgba(16,35,30,.16)}
+h2{font-size:26px;line-height:1.2;letter-spacing:-.015em;margin:0 0 6px;font-weight:740}
+.sub{color:var(--mute);margin:0 0 24px;font-size:15px}
+.err{display:flex;gap:10px;align-items:flex-start;background:var(--danger-bg);color:var(--danger);border-radius:12px;padding:10px 12px;margin:0 0 18px;font-size:14px;font-weight:550}
+.err::before{content:"!";flex:none;width:18px;height:18px;margin-top:1px;border-radius:50%;background:var(--danger);color:var(--danger-bg);display:grid;place-items:center;font-size:12px;font-weight:800}
+.err:empty{display:none}
+label{display:block;font-size:13.5px;font-weight:650;margin:0 0 8px}
+.field{position:relative}
+.field input{width:100%;height:54px;border-radius:14px;border:1.5px solid var(--line);background:var(--field);color:var(--ink);
+  padding:0 52px 0 16px;font:inherit;font-size:17px;letter-spacing:.02em;outline:none;transition:border-color .15s,box-shadow .15s}
+.field input:focus{border-color:var(--yellow-2);box-shadow:0 0 0 4px rgba(243,198,107,.32)}
+.has-error .field input{border-color:var(--danger)}
+.eye{position:absolute;right:6px;top:7px;width:40px;height:40px;border:0;border-radius:10px;background:none;color:var(--mute);cursor:pointer;display:grid;place-items:center}
+.eye:hover{background:rgba(127,127,127,.12);color:var(--ink)}
+.eye:focus-visible,.go:focus-visible{outline:3px solid var(--yellow-2);outline-offset:2px}
+.eye .off,.eye[aria-pressed=true] .on{display:none}.eye[aria-pressed=true] .off{display:block}
+.caps{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--warn);margin:8px 0 0}
+.caps[hidden]{display:none}
+.go{margin-top:22px;width:100%;height:54px;border:0;border-radius:14px;background:var(--yellow);color:var(--yellow-ink);
+  font:inherit;font-size:16.5px;font-weight:720;display:flex;align-items:center;justify-content:center;gap:10px;cursor:pointer;
+  box-shadow:inset 0 -2px 0 rgba(0,0,0,.09),0 8px 20px -8px rgba(236,184,79,.8);transition:background .15s,transform .05s}
+.go:hover{background:var(--yellow-2)}
+.go:active{transform:translateY(1px)}
+.go .spin{display:none;width:18px;height:18px;border-radius:50%;border:2.5px solid rgba(28,42,36,.25);border-top-color:var(--yellow-ink);animation:spin .7s linear infinite}
+.go.busy{pointer-events:none}.go.busy .spin{display:block}.go.busy .arrow{display:none}
+@keyframes spin{to{transform:rotate(360deg)}}
+.small{font-size:13px;color:var(--mute);margin:18px 0 0;text-align:center}
+.has-error .card,.card.has-error{animation:shake .4s cubic-bezier(.36,.07,.19,.97) both}
+@keyframes shake{20%,60%{transform:translateX(-6px)}40%,80%{transform:translateX(6px)}}
+@media (prefers-reduced-motion:reduce){.pv,.card.has-error{animation:none}.go .spin{animation-duration:2s}}
+
+/* phones: the green side becomes a header, the card sits over its edge */
+@media (max-width:860px){
+  .shell{grid-template-columns:1fr;grid-template-rows:auto 1fr}
+  .brand{padding:calc(18px + env(safe-area-inset-top)) 20px 72px;gap:22px;border-radius:0 0 28px 28px}
+  .logo{font-size:17px}.mark{width:32px;height:32px;border-radius:10px}
+  .eyebrow{margin-bottom:10px;font-size:11px}
+  h1{font-size:27px;max-width:none;margin-bottom:10px}
+  .lede{font-size:14.5px}
+  .preview{display:flex;gap:8px;margin-top:18px;max-width:none}
+  .pv{padding:7px 12px;gap:7px;border-radius:999px}
+  .pv::before{position:static;width:7px;height:7px;border-radius:50%;flex:none}
+  .pv b{width:auto;padding:0;background:none;font-size:13px}
+  .pv .ln,.pv small{display:none}
+  .pv .v{font-size:13px}
+  .foot{display:none}
+  .panel{place-items:start center;padding:0 16px calc(28px + env(safe-area-inset-bottom));margin-top:-48px}
+  .card{padding:26px 20px 20px;border-radius:22px}
+  h2{font-size:23px}
+  .sub{margin-bottom:20px}
+}
+@media (max-width:860px) and (max-height:640px){
+  .brand{padding-bottom:64px;gap:16px}
+  .lede,.preview{display:none}
+  h1{font-size:24px;margin:0}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+  <aside class="brand">
+    <div class="logo">
+      <span class="mark"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#183630" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.34-5.66"/><path d="M20 4v5h-5"/><circle cx="12" cy="12" r="2" fill="#183630" stroke="none"/></svg></span>
+      Sold-outs
+    </div>
+    <div>
+      <p class="eyebrow"><i></i>UK Local · restock calls</p>
+      <h1>Who to ring today, <em>and why.</em></h1>
+      <p class="lede">Every sold-out deal on one list: call, skip or later, ranked by what a call is worth, with the merchant's own words.</p>
+      <ul class="preview" aria-hidden="true">
+        <li class="pv call"><b>Call</b><span class="ln"><span></span><span></span></span><span class="v">£14</span></li>
+        <li class="pv later"><b>Later</b><span class="ln"><span></span><span></span></span><small>away till Monday</small></li>
+        <li class="pv skip"><b>Skip</b><span class="ln"><span></span><span></span></span><small>tops itself up</small></li>
+      </ul>
+    </div>
+    <p class="foot"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l7 3v6c0 4.4-3 7.8-7 9-4-1.2-7-4.6-7-9V6l7-3z"/><path d="M9 12l2 2 4-4"/></svg>It ranks and explains. The call is still yours.</p>
+  </aside>
+
+  <main class="panel">
+    <form class="card{{error_class}}" method="post" action="/login" id="f">
+      <h2>Sign in</h2>
+      <p class="sub">Use the team password you were given.</p>
+      <div class="err" role="alert">{{error}}</div>
+      <label for="pw">Password</label>
+      <div class="field">
+        <input id="pw" name="password" type="password" autocomplete="current-password" autocapitalize="off" spellcheck="false" required autofocus>
+        <button type="button" class="eye" id="eye" aria-label="Show password" aria-pressed="false">
+          <svg class="on" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>
+          <svg class="off" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3l18 18"/><path d="M10.6 5.1A10.9 10.9 0 0 1 12 5c6.4 0 10 7 10 7a17.6 17.6 0 0 1-3.2 4.2M6.6 6.6C3.9 8.4 2 12 2 12s3.6 7 10 7a10.6 10.6 0 0 0 5.4-1.5"/><path d="M9.9 9.9a3 3 0 0 0 4.2 4.2"/></svg>
+        </button>
+      </div>
+      <p class="caps" id="caps" hidden><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4l7 8h-4v6H9v-6H5z"/></svg>Caps Lock is on</p>
+      <input type="hidden" name="next" value="{{next}}">
+      <button class="go" id="go" type="submit"><span class="spin" aria-hidden="true"></span><span id="goText">Sign in</span><svg class="arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+      <p class="small">You stay signed in on this device for 30 days.</p>
+    </form>
+  </main>
+</div>
+<script>
+(function(){
+  var pw=document.getElementById("pw"),eye=document.getElementById("eye"),caps=document.getElementById("caps"),
+      go=document.getElementById("go"),f=document.getElementById("f");
+  eye.addEventListener("click",function(){
+    var show=pw.type==="password";pw.type=show?"text":"password";
+    eye.setAttribute("aria-pressed",show);eye.setAttribute("aria-label",show?"Hide password":"Show password");pw.focus();
+  });
+  function capsCheck(e){if(e.getModifierState)caps.hidden=!e.getModifierState("CapsLock")}
+  pw.addEventListener("keydown",capsCheck);pw.addEventListener("keyup",capsCheck);
+  pw.addEventListener("input",function(){f.classList.remove("has-error")});
+  f.addEventListener("submit",function(e){
+    if(!pw.value){e.preventDefault();pw.focus();return}
+    go.classList.add("busy");document.getElementById("goText").textContent="Signing in…";
+  });
+  window.addEventListener("pageshow",function(){go.classList.remove("busy");document.getElementById("goText").textContent="Sign in"});
+})();
+</script>
+</body>
+</html>

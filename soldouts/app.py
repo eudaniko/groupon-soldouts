@@ -1,7 +1,7 @@
 """The rep tool: today's sold-outs, what to do about each and why, and a way to mark a merchant.
 
     python3 -m soldouts.app            # http://localhost:8080
-    PORT=8090 APP_PASSWORD=... python3 -m soldouts.app
+    PORT=8090 APP_PASSWORD=... python3 -m soldouts.app   # with a sign-in page (one team password)
 
 Sold-outs come from the sandbox (GET /soldouts/today) when SANDBOX_KEY is set; otherwise from
 routing/input/todays_soldouts.csv and the page says "demo data". Marks go to the sandbox
@@ -9,6 +9,9 @@ routing/input/todays_soldouts.csv and the page says "demo data". Marks go to the
 """
 import base64
 import csv
+import hashlib
+import hmac
+import html
 import json
 import math
 import os
@@ -16,8 +19,10 @@ import sys
 import threading
 import time
 from datetime import date
+from http.cookies import CookieError, SimpleCookie
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
+from urllib.parse import parse_qs, quote, urlsplit
 
 from soldouts import config, context, decide, detect, sandbox, texts
 
@@ -43,7 +48,8 @@ class State:
     def _reps(self):
         p = config.PACK / "reps.csv"
         if p.exists():
-            return {r["rep_id"]: r for r in csv.DictReader(open(p, newline=""))}
+            with open(p, newline="") as f:
+                return {r["rep_id"]: r for r in csv.DictReader(f)}
         ids = sorted({m["rep_id"] for m in self.ctx["merchants"].values()})
         return {i: {"rep_id": i, "rep_name": i, "team": ""} for i in ids}
 
@@ -159,43 +165,170 @@ def parse_rate(text):
     return min(max(rate, 0.0), 500.0)
 
 
+# ---- sign-in ----------------------------------------------------------------------------------
+# One team password (APP_PASSWORD). The sign-in page sets a signed cookie, so the password itself isn't
+# sent with every request (it was, with the browser's Basic pop-up). Basic auth still works for scripts
+# (curl -u x:$APP_PASSWORD). No APP_PASSWORD = no sign-in, for running it locally.
+COOKIE = "soldouts_session"
+SESSION_DAYS = 30
+MAX_FAILS, FAIL_WINDOW_S = 8, 600        # wrong passwords from one address before a 10-minute pause
+_fails = {}
+
+
+def _sig(pw, issued):
+    key = hmac.new(pw.encode(), b"soldouts-session-v1", hashlib.sha256).digest()
+    return hmac.new(key, issued.encode(), hashlib.sha256).hexdigest()
+
+
+def make_session(pw, now=None):
+    issued = str(int(time.time() if now is None else now))
+    return f"{issued}.{_sig(pw, issued)}"
+
+
+def session_ok(pw, value, now=None):
+    """True for a cookie made by make_session with this password, at most SESSION_DAYS old.
+    Changing APP_PASSWORD signs everyone out."""
+    try:
+        issued, sig = value.split(".", 1)
+        age = (time.time() if now is None else now) - int(issued)
+    except (AttributeError, ValueError):
+        return False
+    return 0 <= age <= SESSION_DAYS * 86400 and hmac.compare_digest(sig, _sig(pw, issued))
+
+
+def password_ok(pw, given):
+    h = lambda s: hashlib.sha256((s or "").encode()).digest()
+    return hmac.compare_digest(h(pw), h(given))
+
+
+def safe_next(target):
+    """Where to go after signing in: a path on this site only (never //host or a full URL)."""
+    t = (target or "/").strip()
+    if not t.startswith("/") or t.startswith("//") or "\\" in t or urlsplit(t).netloc or t.startswith("/login"):
+        return "/"
+    return t
+
+
+def too_many_fails(ip, now=None):
+    now = time.time() if now is None else now
+    if len(_fails) > 1000:                                   # forget addresses that went quiet
+        for k in [k for k, v in _fails.items() if not v or now - v[-1] >= FAIL_WINDOW_S]:
+            del _fails[k]
+    _fails[ip] = [t for t in _fails.get(ip, []) if now - t < FAIL_WINDOW_S]
+    return len(_fails[ip]) >= MAX_FAILS
+
+
+def note_fail(ip, now=None):
+    _fails.setdefault(ip, []).append(time.time() if now is None else now)
+
+
+def login_page(error="", next_path="/"):
+    page = (STATIC / "login.html").read_text(encoding="utf-8")
+    return (page.replace("{{error_class}}", " has-error" if error else "")
+                .replace("{{error}}", html.escape(error))
+                .replace("{{next}}", html.escape(next_path, quote=True))).encode()
+
+
 STATE = None
 
 
 class Handler(BaseHTTPRequestHandler):
+    def _client_ip(self):
+        ip = self.client_address[0]
+        if ip in ("127.0.0.1", "::1"):                       # behind nginx on the same machine
+            fwd = self.headers.get("X-Real-IP") or self.headers.get("X-Forwarded-For", "").split(",")[-1]
+            ip = fwd.strip() or ip
+        return ip
+
+    def _cookie(self):
+        try:
+            c = SimpleCookie(self.headers.get("Cookie", ""))
+        except CookieError:
+            return ""
+        return c[COOKIE].value if COOKIE in c else ""
+
     def _auth_ok(self):
         pw = os.environ.get("APP_PASSWORD")
         if not pw:
             return True
+        if session_ok(pw, self._cookie()):
+            return True
         h = self.headers.get("Authorization", "")
         if h.startswith("Basic "):
             try:
-                return base64.b64decode(h[6:]).decode().split(":", 1)[1] == pw
+                return password_ok(pw, base64.b64decode(h[6:]).decode().split(":", 1)[1])
             except Exception:
                 return False
         return False
 
-    def _send(self, code, body, ctype="application/json"):
+    def _send(self, code, body, ctype="application/json", cookie=None):
         data = body if isinstance(body, bytes) else json.dumps(body).encode()
         self.send_response(code)
         self.send_header("Content-Type", ctype)
         self.send_header("Content-Length", str(len(data)))
         self.send_header("Cache-Control", "no-store")
+        if cookie:
+            self.send_header("Set-Cookie", cookie)
+        if ctype.startswith("text/html"):
+            self.send_header("X-Frame-Options", "DENY")
+            self.send_header("Referrer-Policy", "same-origin")
         self.end_headers()
         self.wfile.write(data)
 
+    def _redirect(self, to, cookie=None):
+        self.send_response(303)
+        self.send_header("Location", to)
+        self.send_header("Content-Length", "0")
+        self.send_header("Cache-Control", "no-store")
+        if cookie:
+            self.send_header("Set-Cookie", cookie)
+        self.end_headers()
+
+    def _session_cookie(self, value, max_age):
+        secure = "; Secure" if self.headers.get("X-Forwarded-Proto", "") == "https" else ""
+        return f"{COOKIE}={value}; Path=/; Max-Age={max_age}; HttpOnly; SameSite=Lax{secure}"
+
     def _gate(self):
+        """Signed in, or: pages go to the sign-in page, API calls get a 401 (no browser pop-up)."""
         if self._auth_ok():
             return True
-        self.send_response(401)
-        self.send_header("WWW-Authenticate", 'Basic realm="sold-outs"')
-        self.end_headers()
+        if self.path.startswith("/api/"):
+            self._send(401, {"error": "signed out", "sign_in": "/login"})
+        else:
+            self._redirect("/login?next=" + quote(self.path, safe=""))
         return False
 
+    def _login(self):
+        pw = os.environ.get("APP_PASSWORD", "")
+        n = min(int(self.headers.get("Content-Length", 0) or 0), 4096)
+        form = parse_qs(self.rfile.read(n).decode("utf-8", "replace"))
+        nxt = safe_next(form.get("next", ["/"])[0])
+        ip = self._client_ip()
+        with _lock:
+            blocked = too_many_fails(ip)
+        html_type = "text/html; charset=utf-8"
+        if blocked:
+            return self._send(429, login_page("Too many wrong tries. Wait 10 minutes, then try again.", nxt), html_type)
+        if not pw or password_ok(pw, form.get("password", [""])[0]):
+            return self._redirect(nxt, self._session_cookie(make_session(pw), SESSION_DAYS * 86400))
+        with _lock:
+            note_fail(ip)
+        time.sleep(0.6)                                       # slows down guessing
+        self._send(401, login_page("That password didn't work. Check it and try again.", nxt), html_type)
+
     def do_GET(self):
+        path, _, query = self.path.partition("?")
+        if path == "/healthz":
+            return self._send(200, {"ok": True})
+        if path == "/login":
+            nxt = safe_next(parse_qs(query).get("next", ["/"])[0])
+            if self._auth_ok():
+                return self._redirect(nxt)
+            return self._send(200, login_page("", nxt), "text/html; charset=utf-8")
+        if path == "/logout":
+            return self._redirect("/login", self._session_cookie("", 0))
         if not self._gate():
             return
-        path, _, query = self.path.partition("?")
         params = dict(p.split("=", 1) for p in query.split("&") if "=" in p)
         if path == "/":
             return self._send(200, (STATIC / "index.html").read_bytes(), "text/html; charset=utf-8")
@@ -203,11 +336,11 @@ class Handler(BaseHTTPRequestHandler):
             return self._send(200, STATE.board(params.get("rep") or None, parse_rate(params.get("rate"))))
         if path == "/api/marks":
             return self._send(200, STATE.marks())
-        if path == "/healthz":
-            return self._send(200, {"ok": True})
         self._send(404, {"error": "not found"})
 
     def do_POST(self):
+        if self.path.partition("?")[0] == "/login":
+            return self._login()
         if not self._gate():
             return
         if self.path != "/api/mark":

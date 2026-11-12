@@ -116,7 +116,9 @@ The £340k multiplies £11 by every task, but 28% are already called, the ones l
 
 ## Checked against a rep
 
-PENDING: Renee's labels for merchants in her book vs the tool's decision and flags.
+**Not done by hand-in.** On Tuesday I picked 10 merchants from Renee's book (R10, North H&B) and asked her "ring or leave, and why": a mix of ones the tool says to call, ones where the merchant has said no, two that top themselves up and one that isn't worth a call. Her answers hadn't arrived when I submitted. When they do, they go in `data/rep_labels.csv` and `python3 -m soldouts.evaluate data/rep_labels.csv` prints, for each merchant, Renee vs the tool with the LLM flags, the tool with the rules flags and the LLM's own one-line verdict, plus how many agree.
+
+What is checked meanwhile: every quote the LLM gives is checked word for word against the item it cites, in code, and `--backend replay` re-runs that check on all 73 recorded answers offline. The tests feed it a made-up quote and a cut-off answer, and both are rejected. The AI never decides: it finds the words, and `decide.py` applies fixed rules. That shows the quotes are real, not that the judgement matches a rep's. That part still needs Renee.
 
 ## What it can't do yet
 

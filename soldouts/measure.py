@@ -21,6 +21,15 @@ from pathlib import Path
 from soldouts import config, money
 from soldouts.holdout import in_holdout
 
+# Stop rule (Greg asked for numbers, not "credibly"). Effects are listed deals minus holdout,
+# minus the same gap in the 12 weeks before launch. Each line is only checked once four weeks of
+# sold-outs have had their full outcome window.
+STOP_RESTOCK = -0.12      # 14-day restock rate, 12 points
+STOP_GP = -6.0            # 30-day GP per sold-out, £6
+RESTOCK_FROM_WEEK = 6     # 4 weeks of sold-outs + 14 days
+GP_FROM_WEEK = 8          # 4 weeks of sold-outs + 30 days
+GP_WINDOW_D = 30
+
 MIN_PER_TASK = config.MINUTES_PER_TASK
 
 
@@ -138,9 +147,10 @@ def _outcomes(rows, window_days):
 def _did_ci(t_post, h_post, t_pre, h_pre, n=1000, seed=1):
     """(treated - holdout) after launch minus the same gap before launch, with a 90% bootstrap interval.
 
-    The holdout is picked by a hash, so the two groups are not identical: on history the 'treated'
-    merchants restocked ~5 points less often than the holdout with no change at all. Subtracting the
-    pre-launch gap removes that.
+    The holdout is picked by a hash, so the two groups are not identical and their gap moves around:
+    about 0 over the whole history, but 'treated' restocked ~6 points less often (and made ~£4 less GP)
+    from mid-November to early January last year, with no change at all. Subtracting the pre-launch gap
+    removes most of that.
     """
     if min(len(t_post), len(h_post), len(t_pre), len(h_pre)) < 2:
         return None
@@ -158,6 +168,10 @@ def readout(pack, start, end=None, window_days=14, pre_weeks=12):
     pre_start = (date.fromisoformat(start) - timedelta(weeks=pre_weeks)).isoformat()
     pre_end = (date.fromisoformat(start) - timedelta(days=1)).isoformat()
     post, pre = eligible_soldouts(pack, start, end), eligible_soldouts(pack, pre_start, pre_end)
+    end_d = date.fromisoformat(end)
+    # Only sold-outs whose outcome window is over count (a deal that sold out 3 days ago can't have restocked "within 14 days" yet).
+    cut = {"restock": (end_d - timedelta(days=window_days)).isoformat(),
+           "gp": (end_d - timedelta(days=GP_WINDOW_D)).isoformat()}
     acts = defaultdict(int)
     for a in _rows(pack, "activities.csv"):
         if a["sold_out_id"]:
@@ -166,7 +180,9 @@ def readout(pack, start, end=None, window_days=14, pre_weeks=12):
     for period, rows in (("post", post), ("pre", pre)):
         for name, hold in (("treated", False), ("holdout", True)):
             grp = [r for r in rows if r["holdout"] == hold]
-            rs, gp = _outcomes(grp, window_days)
+            done = (lambda r, k: True) if period == "pre" else (lambda r, k: r["sold_out_date"] <= cut[k])
+            rs, _ = _outcomes([r for r in grp if done(r, "restock")], window_days)
+            _, gp = _outcomes([r for r in grp if done(r, "gp")], window_days)
             groups[(period, name)] = (rs, gp)
             groups[(period, name, "n")] = len(grp)
             groups[(period, name, "act")] = sum(1 for r in grp if acts[r["sold_out_id"]])
@@ -177,6 +193,7 @@ def readout(pack, start, end=None, window_days=14, pre_weeks=12):
             rs, gp = groups[(period, name)]
             out[period][name] = {
                 "n": groups[(period, name, "n")],
+                f"n_with_{window_days}d_outcome": len(rs),
                 f"restocked_within_{window_days}d": round(statistics.fmean(rs), 3) if rs else None,
                 "gp_30d_mean_gbp": [round(x, 2) for x in _mean_ci(gp)] if gp else None,
                 "n_with_gp_30d": len(gp),
@@ -188,17 +205,41 @@ def readout(pack, start, end=None, window_days=14, pre_weeks=12):
     out["gp_30d_effect_gbp"] = _did_ci(g[("post", "treated")][1], g[("post", "holdout")][1],
                                        g[("pre", "treated")][1], g[("pre", "holdout")][1])
     out["rep_hours_saved"] = round(out["post"]["treated"]["n"] * MIN_PER_TASK / 60, 1)
+    weeks_live = (end_d - date.fromisoformat(start)).days / 7
+    out["weeks_live"] = round(weeks_live, 1)
     out["stop_if"] = {
-        "restock_rate_effect_below": -0.10,
-        "gp_30d_effect_upper_bound_below": 0.0,
+        "restock_rate_effect_below": STOP_RESTOCK, "restock_checked_from_week": RESTOCK_FROM_WEEK,
+        "gp_30d_effect_below_gbp": STOP_GP, "gp_checked_from_week": GP_FROM_WEEK,
     }
-    eff = out["restock_rate_effect"]
-    gpe = out["gp_30d_effect_gbp"]
-    out["stop_now"] = bool((eff and eff[0] < -0.10) or (gpe and gpe[2] < 0))
-    out["read_as"] = ("Effects are [estimate, 90% low, 90% high], treated minus holdout, minus the same gap before launch. "
-                      "Rep hours saved is counted, not estimated. On history with no change, the restock effect moves "
-                      "by about +/-9 points at 4 weeks and +/-7 at 12; GP by about +/-£2.5 at 12 weeks.")
+    out["stop_reasons"] = stop_check(out["restock_rate_effect"], out["gp_30d_effect_gbp"], weeks_live)
+    out["stop_now"] = bool(out["stop_reasons"])
+    out["read_as"] = ("Effects are [estimate, 90% low, 90% high]: listed deals minus holdout, minus the same gap in the "
+                      "12 weeks before launch. Only sold-outs whose 14-day (restock) or 30-day (GP) window is over count. "
+                      "Rep hours saved is counted, not estimated. On history with no change (a fake launch every week, "
+                      "Aug 2025 to Sep 2026), the restock line was crossed by chance in 2-4% of reads and "
+                      "the GP line in 2%.")
     return out
+
+
+def stop_check(restock_effect, gp_effect, weeks_live):
+    """The stop lines crossed, as sentences (empty = keep going). Effects are [estimate, low, high] or None."""
+    out = []
+    if weeks_live >= RESTOCK_FROM_WEEK and restock_effect and restock_effect[0] < STOP_RESTOCK:
+        out.append(f"14-day restock rate {restock_effect[0] * 100:+.1f} points vs holdout (line: {STOP_RESTOCK * 100:.0f})")
+    if weeks_live >= GP_FROM_WEEK and gp_effect and gp_effect[0] < STOP_GP:
+        out.append(f"30-day GP per sold-out £{gp_effect[0]:+.2f} vs holdout (line: £{STOP_GP:.0f})")
+    return out
+
+
+def callbacks(input_csv, overrides_path):
+    """Promised callbacks in a routing input file, and which of them the proposed list would drop."""
+    import json
+    rows = list(csv.DictReader(open(input_csv, newline="", encoding="utf-8")))
+    listed = set(json.load(open(overrides_path))["routing"]["suppressed_deal_ids"])
+    promised = [r for r in rows if r.get("callback_promised") == "1"]
+    return {"tasks": len(rows), "promised_callbacks": len(promised),
+            "tasks_on_listed_deals": sum(r["deal_id"] in listed for r in rows),
+            "callbacks_dropped": [r["task_id"] for r in promised if r["deal_id"] in listed]}
 
 
 def main():
@@ -210,6 +251,9 @@ def main():
     v = sub.add_parser("volume", help="what the actual suppression list removes, last 12 weeks")
     v.add_argument("--pack", default=str(config.PACK))
     v.add_argument("--list", default=str(config.ROOT / "proposal" / "suppressions.csv"))
+    c = sub.add_parser("callbacks", help="promised callbacks the list would drop from a routing input file")
+    c.add_argument("--input", default=str(config.ROOT / "routing" / "input" / "todays_soldouts.csv"))
+    c.add_argument("--overrides", default=str(config.ROOT / "proposal" / "env_overrides.json"))
     r = sub.add_parser("readout")
     r.add_argument("--pack", default=str(config.PACK))
     r.add_argument("--start", required=True)
@@ -219,6 +263,8 @@ def main():
         res = estimate(a.pack)
     elif a.cmd == "volume":
         res = list_volume(a.pack, a.list)
+    elif a.cmd == "callbacks":
+        res = callbacks(a.input, a.overrides)
     else:
         res = readout(a.pack, a.start, a.end)
     print(json.dumps(res, indent=2))

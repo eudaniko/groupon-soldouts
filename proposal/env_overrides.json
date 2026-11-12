@@ -1,11 +1,9 @@
 {
   "_comment": "prod values, temporary, set by merchant ops 2026-03 while the ranking was noisy",
   "priors": {
-    "restock": {
-      "called": 0.46,
-      "left_alone": 0.43
-    }
+    "restock": {"called": 0.46, "left_alone": 0.43}
   },
+  "_comment_soldouts": "2026-11 sold-out suppression (config-only). Off = deploy this file without the 'routing' key. Keeps the 3 ids from routing.json. List and reasons: proposal/suppressions.csv",
   "routing": {
     "suppressed_deal_ids": [
       "D12006-1",
@@ -1109,6 +1107,5 @@
       "D12997-1",
       "D12997-2"
     ]
-  },
-  "_comment_soldouts": "2026-11 sold-out suppression (config-only). OFF = delete the 'routing' key. Keeps the 3 ids from routing.json. List: proposal/suppressions.csv"
+  }
 }

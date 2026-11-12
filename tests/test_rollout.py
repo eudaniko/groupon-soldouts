@@ -20,6 +20,9 @@ def ctx():
         "D4-1": [s("AR4", "M4", end="2026-12-01")], "D5-1": [s("AR5", "M5", end="2027-03-01")]}}
 
 
+ROOT = Path(__file__).resolve().parent.parent
+
+
 class HoldoutTest(unittest.TestCase):
     def test_stable_and_about_twenty_percent(self):
         ids = [f"M{10000 + i}" for i in range(3000)]
@@ -78,6 +81,24 @@ class MeasureTest(unittest.TestCase):
         self.assertEqual(d, 0)
         self.assertLess(lo, 0)
         self.assertGreater(hi, 0)
+
+
+class StopRuleTest(unittest.TestCase):
+    """The numbers Greg gets: restock 12 points (from week 6), GP £6 per sold-out (from week 8)."""
+    def test_restock_line(self):
+        self.assertEqual(measure.stop_check([-0.20, -0.3, -0.1], None, weeks_live=5), [])   # too early to read
+        self.assertTrue(measure.stop_check([-0.13, -0.2, 0.0], None, weeks_live=6))
+        self.assertEqual(measure.stop_check([-0.11, -0.2, 0.0], None, weeks_live=6), [])
+
+    def test_gp_line(self):
+        self.assertEqual(measure.stop_check(None, [-8.0, -12, -4], weeks_live=7), [])        # too early to read
+        self.assertTrue(measure.stop_check(None, [-6.5, -10, -3], weeks_live=8))
+        self.assertEqual(measure.stop_check(None, [-5.5, -10, -1], weeks_live=8), [])
+
+    def test_callback_count_on_todays_routing_input(self):
+        res = measure.callbacks(ROOT / "routing" / "input" / "todays_soldouts.csv", ROOT / "proposal" / "env_overrides.json")
+        self.assertEqual((res["tasks"], res["promised_callbacks"], res["tasks_on_listed_deals"]), (36, 3, 3))
+        self.assertEqual(res["callbacks_dropped"], [])
 
 
 if __name__ == "__main__":

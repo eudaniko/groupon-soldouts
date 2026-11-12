@@ -4,7 +4,7 @@ Built for Dan Okafor's sold-outs ask (Groupon UK Local, case exercise). People, 
 
 **In one line:** about 1 in 5 restock tasks is for a deal that tops itself up (auto-replenish), and a call there adds almost nothing. Stop creating most of those tasks (config-only, off by default, with a 20% holdout), and give reps a phone page that says, for every sold-out, call / skip / later / something else, with the £ and the merchant's own words behind it.
 
-**For Dan:** ~18 rep hours a week back, counted from day one, with under £1k a year of GP at risk. What reps do with that time is worth £0 to ~£50k of GP a year, not £340k. First restock check mid-December, GP read mid-January, firm by mid-March (if it goes in this week, before the freeze).
+**For Dan:** ~18 rep hours a week back, counted from day one, with under £1k a year of GP at risk. What reps do with that time is worth £0 to ~£50k of GP a year, not £340k. First restock check at Christmas, first GP check early January, firm by March (if it goes in this week, before the freeze).
 
 ## Run it
 
@@ -34,9 +34,11 @@ python3 -m soldouts.detect --backend rules --pack data/pack --merchants M10001  
 python3 -m soldouts.detect --backend llm --merchants M10001 --out data/flags_llm.json --merge   # live, needs key
 python3 -m soldouts.measure volume                        # what the actual list removes (last 12 weeks)
 python3 -m soldouts.measure estimate                      # the range, from history
-python3 -m soldouts.measure readout --start 2026-11-15    # the real number, after launch
+python3 -m soldouts.measure readout --start 2026-11-12    # the real number and the stop lines, after launch
+python3 -m soldouts.measure callbacks                      # promised callbacks the list would drop (routing input)
 python3 -m soldouts.evaluate data/rep_labels.csv          # tool vs a rep's ring/leave
 python3 scripts/build_suppressions.py --on 2026-11-13 --out proposal/suppressions.csv
+python3 scripts/build_overrides.py                        # proposal/env_overrides.json + the diff Hana reviews
 python3 scripts/estimate_uplift.py                        # re-check of the £11 memo (needs pandas)
 ```
 
@@ -78,7 +80,7 @@ The £340k multiplies £11 by every task, but 28% are already called, the ones l
 
 **2. The routing change is narrow on purpose.** Only deals with an open-ended auto-replenish schedule, bands B to D. Not band A: too few calls to be sure (the interval runs from £2.7 to £27.8). Not "every low-value task": that's a bigger change to how reps work and Dan, Renee and Greg should decide it, not me in three hours. It is the part I'm most sure is safe. Applied to the last 12 weeks, the list removes ~88 tasks a week (14% of all restock tasks), ~18 rep hours, with ~£500 a year of GP at risk (worst case ~£1k).
 
-**3a. For the freeze: config-only.** Greg's condition was "config-only, or it's January". So what goes to Greg's change review (Wednesday 15:00, the last before the freeze; Friday 11:00 is only a final gate for things already discussed) is `proposal/env_overrides.json`: the existing priors override unchanged, plus `routing.suppressed_deal_ids` with Ops' 3 existing ids (the override replaces the list in `routing.json`, so they must be carried over) and the 1,097 auto-replenish deals. No code change; routing already honours that list. Off = Merchant Ops deploys the file without the `routing` block (Hana pointed out that is a config deploy by Greg's team, not a flip); the next run's output is then identical to today's (tested in `tests/test_config_only.py`). Known limit: in 2.15.0 a suppressed deal also loses a promised callback. The code change below fixes that and waits for January. Change request: `notes/greg-change-request.md`.
+**3a. For the freeze: config-only.** Greg's condition was "config-only, or it's January". So what goes to Greg's change review (Wednesday 15:00, the last before the freeze; Friday 11:00 is only a final gate for things already discussed) is `proposal/env_overrides.json`: the existing priors override unchanged, plus `routing.suppressed_deal_ids` with Ops' 3 existing ids (the override replaces the list in `routing.json`, so they must be carried over) and the 1,097 auto-replenish deals. No code change; routing already honours that list. Off = Merchant Ops deploys the file without the `routing` block (Hana pointed out that is a config deploy by Greg's team, not a flip); the next run's output is then identical to today's (tested in `tests/test_config_only.py`). Known limit: in 2.15.0 a suppressed deal also loses a promised callback. On today's routing input that's 0 (3 callbacks in 36 tasks, none on a listed deal; `measure callbacks` and a test check it); history doesn't record callbacks, so there's no weekly number. The code change below fixes it and waits for January. Change request: `notes/greg-change-request.md`.
 
 **3. The code version (2.16.0, for January): off by default, one switch, rollback = switch off.** The switch and the empty suppression file already existed in routing 2.15.0 ("agreed in October"). I wired them in `plan.py`: with the switch off the output is identical (tested); promised callbacks are never suppressed; only JSON `true` turns it on (a string `"false"` in `env_overrides.json` would otherwise be truthy).
 
@@ -97,8 +99,9 @@ The £340k multiplies £11 by every task, but 28% are already called, the ones l
 - **Counted from day one:** tasks not created x 12 minutes. On the last 12 weeks the list would have removed ~88 tasks a week: **~18 rep hours a week** (`python3 -m soldouts.measure volume`).
 - **What it costs:** GP lost by not calling those deals: ~£500 a year, worst case ~£1k (calls on auto-replenished deals add £0–3 each, and few of them were made).
 - **What it could earn:** if the freed slots go to the next task on the list, between £0 (time goes elsewhere) and ~£50k a year (every slot becomes a band-A manual call). That's the honest range, and it's why I don't quote one number.
-- **The real number:** `python3 -m soldouts.measure readout --start <first run>`. It compares listed deals (treated) with the 20% holdout on 14-day restock rate and 30-day GP, **minus the same gap in the 12 weeks before launch**. The hash split isn't perfectly balanced: on history, with no change at all, "treated" merchants restocked ~5 points less often than the holdout, so a plain comparison would look like harm on day one.
-- **How sure:** on history with no change (an A/A test), the restock effect moves by about ±9 points at 4 weeks and ±7 at 12; GP by about ±£2.5 at 12 weeks. So: first restock check at week 4 (mid-December if it starts 15 November), first GP read mid-January, firm by mid-March. The stop rule's thresholds (restock 10 points worse; GP credibly below zero) are set above that noise.
+- **The real number:** `python3 -m soldouts.measure readout --start <first run>`. It compares listed deals (treated) with the 20% holdout on 14-day restock rate and 30-day GP, **minus the same gap in the 12 weeks before launch**, using only sold-outs whose 14 or 30 days are over. The hash split isn't perfectly balanced and the gap moves around: about 0 over the whole history, but in the same weeks last year (mid-November to early January) "treated" merchants restocked ~6 points less often and made ~£4 less GP per sold-out, with no change at all. A plain comparison would have looked like harm.
+- **Stop lines (numbers, as Greg asked):** restock more than **12 points** behind the holdout, checked every Monday from week 6 (four weeks of sold-outs with their 14 days); 30-day GP per sold-out more than **£6** below the holdout (average ~£17), checked every Monday from week 8. `readout` prints `stop_now` and the reason.
+- **How sure:** an A/A test on history (a fake launch every week, Aug 2025 to Sep 2026, no change at all): the restock line was crossed by chance in 2–4% of reads, the GP line in 2%. At 10 points (my first draft) the restock line fired by chance in up to 9% of reads, too often for a weekly check in a freeze. So: first restock check at Christmas (week 6 if it starts ~12 November), first GP check early January, firm by March. The holdout can only see a large drop; a small loss (the expected one is under £1 per sold-out) is below what 20% of ~97 sold-outs a week can show.
 
 ## Where AI is used, and how it's checked
 

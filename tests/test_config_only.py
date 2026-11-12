@@ -1,4 +1,4 @@
-"""The config-only rollout for Friday's gate: suppressed_deal_ids via env_overrides.json, routing code untouched."""
+"""The config-only rollout for the freeze: suppressed_deal_ids via env_overrides.json, routing code untouched."""
 import json
 import sys
 import unittest
@@ -46,6 +46,11 @@ class ConfigOnlyTest(unittest.TestCase):
         self.assertTrue(rows)
         self.assertTrue(all(r["source"] == "auto_replenish_schedules" for r in rows))
 
+
+    def test_promised_callbacks_stay_on_todays_list(self):
+        # Today's input has 3 promised callbacks (T-0004, T-0007, T-0010); none is on a listed deal.
+        ids = {p["task_id"] for p in sum(run(PROPOSED), [])}
+        self.assertTrue({"T-0004", "T-0007", "T-0010"} <= ids)
 
 if __name__ == "__main__":
     unittest.main()
